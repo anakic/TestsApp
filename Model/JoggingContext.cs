@@ -15,7 +15,7 @@ namespace jogging.Model
         {
             base.OnConfiguring(optionsBuilder);
         }
-
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().HasIndex(u => u.Email);
@@ -28,5 +28,13 @@ namespace jogging.Model
 
         public DbSet<Entry> Entries { get; set; }
         public DbSet<User> Users { get; set; }
+    }
+
+    public static class ContextExtensionMethods
+    {
+        public static User FindByEmail(this DbSet<User> users, string email)
+        {
+            return users.SingleOrDefault(u => u.Email.ToUpper() == email.ToUpper());
+        }
     }
 }

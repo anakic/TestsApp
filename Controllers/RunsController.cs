@@ -10,20 +10,30 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace jogging.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]"), Authorize]
     public class RunsController : Controller
     {
         JoggingContext _context;
-        
-        public RunsController(JoggingContext context)
+        IUserService _userService;
+        public RunsController(JoggingContext context, IUserService userService)
         {
             _context = context;
+            _userService = userService;
         }
 
-        [HttpGet()]
-        public IEnumerable<EntryDTO> Get(DateTime from, DateTime to, int? userId)
+        [HttpGet]
+        public IActionResult Get(DateTime from, DateTime to, int userId)
         {
-            return _context.Entries.Where(e => e.Date >= from && e.Date <= to)
+            var currentUser = _context.Users.FindByEmail(_userService.GetCurrentUserIdentity());
+            if (currentUser.Role != UserRole.Admin && userId != currentUser.Id)
+            {
+                ModelState.AddModelError(nameof(userId), "Access denied");
+                return BadRequest(ModelState);
+            }
+
+            var entries = _context.Entries
+                .Where(e => e.Date >= from && e.Date <= to)
+                .Where(e => e.UserId == userId)
                 .Select(e => new EntryDTO()
                 {
                     Id = e.Id,
@@ -34,12 +44,15 @@ namespace jogging.Controllers
                     UserEmail = e.User.Email,
                     AverageSpeed = e.DistanceInMeters / (float)e.TimeInSeconds
                 });
+
+            return Ok(entries);
         }
 
         [HttpGet("[action]")]
         public IEnumerable<WeeklySummaryDTO> WeeklySummary(DateTime from, DateTime to)
         {
             return _context.Entries.Where(e => e.Date >= from && e.Date <= to)
+                .Where(e => e.User.Email.ToUpper() == _userService.GetCurrentUserIdentity().ToUpper())
                 .GroupBy(e => new { Year = e.Date.Year, Week = e.Date.Day / 7 })
                 .Select(g => new WeeklySummaryDTO
                 {
