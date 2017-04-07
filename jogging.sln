@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26228.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "jogging", "Jogging\jogging.csproj", "{D72BD7EA-D283-4702-9205-BEADCDBF98EB}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jogging.Tests", "Jogging.Tests\Jogging.Tests.csproj", "{E85F03F1-781A-4E66-B5D8-A4160AB3EBBB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{D72BD7EA-D283-4702-9205-BEADCDBF98EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D72BD7EA-D283-4702-9205-BEADCDBF98EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D72BD7EA-D283-4702-9205-BEADCDBF98EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E85F03F1-781A-4E66-B5D8-A4160AB3EBBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E85F03F1-781A-4E66-B5D8-A4160AB3EBBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E85F03F1-781A-4E66-B5D8-A4160AB3EBBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E85F03F1-781A-4E66-B5D8-A4160AB3EBBB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
