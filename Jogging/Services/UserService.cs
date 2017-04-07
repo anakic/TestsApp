@@ -10,8 +10,8 @@ namespace jogging.Services
     public class UserService : IUserService
     {
         IHttpContextAccessor _httpContextAccessor;
-        JoggingContext _context;
-        public UserService(IHttpContextAccessor httpContextAccessor, JoggingContext context)
+        JoggingDbContext _context;
+        public UserService(IHttpContextAccessor httpContextAccessor, JoggingDbContext context)
         {
             _httpContextAccessor = httpContextAccessor;
             _context = context;

@@ -7,9 +7,9 @@ using JetBrains.Annotations;
 
 namespace jogging.Model
 {
-    public class JoggingContext : DbContext
+    public class JoggingDbContext : DbContext
     {
-        public JoggingContext(DbContextOptions options) : base(options){}
+        public JoggingDbContext(DbContextOptions options) : base(options){}
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

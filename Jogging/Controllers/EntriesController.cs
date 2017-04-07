@@ -11,11 +11,11 @@ using Microsoft.AspNetCore.Authorization;
 namespace jogging.Controllers
 {
     [Route("api/[controller]"), Authorize]
-    public class RunsController : Controller
+    public class EntriesController : Controller
     {
-        JoggingContext _context;
+        JoggingDbContext _context;
         IUserService _userService;
-        public RunsController(JoggingContext context, IUserService userService)
+        public EntriesController(JoggingDbContext context, IUserService userService)
         {
             _context = context;
             _userService = userService;

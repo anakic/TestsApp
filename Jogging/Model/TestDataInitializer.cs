@@ -9,7 +9,7 @@ namespace jogging.Model
     {
         static Random _rng = new Random();
 
-        public static void Initialize(JoggingContext ctx)
+        public static void Initialize(JoggingDbContext ctx)
         {
             ctx.RemoveRange(ctx.Entries);
             ctx.Users.RemoveRange(ctx.Users);
