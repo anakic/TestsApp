@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Jogging.Tests.Mocks
 {
-    class DummyUserService : IUserService
+    class DummyUserService : ILoginService
     {
         User _userToReturn;
 

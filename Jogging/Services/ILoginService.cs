@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace jogging.Services
 {
-    public interface IUserService
+    public interface ILoginService
     {
         User GetCurrentUser();
         Task<User> LoginAsync(string username, string password);

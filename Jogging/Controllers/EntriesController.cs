@@ -14,8 +14,8 @@ namespace jogging.Controllers
     public class EntriesController : Controller
     {
         JoggingDbContext _context;
-        IUserService _userService;
-        public EntriesController(JoggingDbContext context, IUserService userService)
+        ILoginService _userService;
+        public EntriesController(JoggingDbContext context, ILoginService userService)
         {
             _context = context;
             _userService = userService;

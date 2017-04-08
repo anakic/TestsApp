@@ -35,7 +35,7 @@ namespace jogging
             // Add framework services.
             services.AddMvc();
             services.AddDbContext<JoggingDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<ILoginService, LoginService>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }
 

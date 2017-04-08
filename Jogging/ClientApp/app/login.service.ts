@@ -10,18 +10,18 @@ export class LoginService {
     public loginUrl: string;
     public redirectUrl: string;
 
-    public user: User;
+    public user: LoginData;
 
-    public initialize(): Observable<User> {
+    public initialize(): Observable<LoginData> {
         return this.http
-            .get(`/api/accounts/current`, { withCredentials: true })
+            .get(`/api/login`, { withCredentials: true })
             .map(result => {
-                return this.setUserAndRedirect(result.ok ? result.json() as User : null);
+                return this.setUserAndRedirect(result.ok ? result.json() as LoginData : null);
             });
     }
 
     public signout(): Observable<boolean> {
-        return this.http.post(`/api/accounts/signout`, {})
+        return this.http.delete(`/api/login`)
             .map(result => {
                 if (result.ok) {
                     this.setUserAndRedirect(null);
@@ -32,10 +32,10 @@ export class LoginService {
 
     public login(email: string, password: string): Observable<LoginResult> {
         return this.http
-            .post(`/api/accounts/login`, { email, password })
+            .post(`/api/login`, { email, password })
             .map(result => {
                 if (result.ok) {
-                    var user = this.setUserAndRedirect(result.ok ? result.json() as User : null);
+                    var user = this.setUserAndRedirect(result.ok ? result.json() as LoginData : null);
                     return { success: true, message: null, user: user };
                 }
                 else {
@@ -46,7 +46,7 @@ export class LoginService {
             });
     }
 
-    private setUserAndRedirect(user: User): User {
+    private setUserAndRedirect(user: LoginData): LoginData {
         this.user = user;
         this.router.navigateByUrl(user ? this.redirectUrl : this.loginUrl);
         return this.user;
@@ -61,10 +61,10 @@ export class LoginService {
 interface LoginResult {
     success: boolean,
     message: string,
-    user: User
+    user: LoginData
 }
 
-export interface User {
+export interface LoginData {
     id: number,
     firstName: string,
     lastName: string,

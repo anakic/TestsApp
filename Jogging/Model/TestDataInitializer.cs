@@ -14,15 +14,16 @@ namespace jogging.Model
             ctx.Database.EnsureDeleted();
             ctx.Database.EnsureCreated();
 
-            var user = new User() { Id = 0, Email = "regular@user.com", FirstName = "Peon", LastName = "User", Role = UserRole.User };
+            var user = new User() { Id = 0, Email = "regular@user.com", FirstName = "Feeble", LastName = "Peon", Role = UserRole.User };
             user.SetPassword("pwd");
             ctx.Add(user);
 
-            var manager = new User() { Id = 0, Email = "manager@user.com", FirstName = "Bishop", LastName = "User", Role = UserRole.Manager };
+            var manager = new User() { Id = 0, Email = "manager@user.com", FirstName = "Good", LastName = "Sir", Role = UserRole.Manager };
             manager.SetPassword("pwd");
             ctx.Add(manager);
-
-            var admin = new User() { Id = 0, Email = "admin@user.com", FirstName = "King", LastName = "User", Role = UserRole.Admin };
+            
+            //brown-nose mode = on
+            var admin = new User() { Id = 0, Email = "admin@user.com", FirstName = "Your", LastName = "Royal Highness", Role = UserRole.Admin };
             admin.SetPassword("pwd");
             ctx.Add(admin);
 

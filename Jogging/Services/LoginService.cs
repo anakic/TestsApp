@@ -10,12 +10,12 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace jogging.Services
 {
-    public class UserService : IUserService
+    public class LoginService : ILoginService
     {
         public TimeSpan CookieDuration { get; set; } = new TimeSpan(14, 0, 0, 0, 0);//14 days
         IHttpContextAccessor _httpContextAccessor;
         JoggingDbContext _context;
-        public UserService(IHttpContextAccessor httpContextAccessor, JoggingDbContext context)
+        public LoginService(IHttpContextAccessor httpContextAccessor, JoggingDbContext context)
         {
             _httpContextAccessor = httpContextAccessor;
             _context = context;

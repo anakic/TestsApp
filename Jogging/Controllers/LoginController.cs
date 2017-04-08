@@ -9,15 +9,15 @@ using jogging.Services;
 namespace jogging.Controllers
 {
     [Route("api/[controller]")]
-    public class AccountsController : Controller
+    public class LoginController : Controller
     {
-        IUserService _userService;
-        public AccountsController(IUserService userService)
+        ILoginService _userService;
+        public LoginController(ILoginService userService)
         {
             _userService = userService;
         }
 
-        [HttpGet("[action]")]
+        [HttpGet()]
         public IActionResult Current()
         {
             var user = _userService.GetCurrentUser();
@@ -27,7 +27,7 @@ namespace jogging.Controllers
                 return NotFound();
         }
 
-        [HttpPost("[action]")]
+        [HttpPost()]
         public async Task<IActionResult> Login([FromBody]LoginCredentials credentials)
         {
             var user = await _userService.LoginAsync(credentials.Email, credentials.Password);
@@ -37,7 +37,7 @@ namespace jogging.Controllers
                 return NotFound("Invalid credentials.");
         }
 
-        [HttpPost("[action]")]
+        [HttpDelete()]
         public async Task<IActionResult> SignOut()
         {
             await _userService.SignOut();

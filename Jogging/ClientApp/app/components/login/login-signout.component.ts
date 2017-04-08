@@ -1,5 +1,5 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { LoginService, User } from '../../login.service';
+import { LoginService, LoginData } from '../../login.service';
 
 @Component({
     selector: 'login-signout',

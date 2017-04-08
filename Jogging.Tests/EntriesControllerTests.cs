@@ -193,7 +193,7 @@ namespace Jogging.Tests
 
             //user 1 summary (only week2)
             _userService.SetUser(_regularUser1);
-            var res = ((_controller.WeeklySummary(dt1, dt3) as OkObjectResult).Value as IEnumerable<WeeklySummaryDTO>).ToArray();
+            var res = ((_controller.WeeklySummaries(dt1, dt3) as OkObjectResult).Value as IEnumerable<WeeklySummaryDTO>).ToArray();
             Assert.AreEqual(2020, res.Single().Year);
             Assert.AreEqual(2, res.Single().Week);
             Assert.AreEqual(u1e1.DistanceInMeters, res.Single().TotalDistanceInMeters);
@@ -202,7 +202,7 @@ namespace Jogging.Tests
 
             //user 2
             _userService.SetUser(_regularUser2);
-            res = ((_controller.WeeklySummary(dt1, dt3) as OkObjectResult).Value as IEnumerable<WeeklySummaryDTO>).ToArray();
+            res = ((_controller.WeeklySummaries(dt1, dt3) as OkObjectResult).Value as IEnumerable<WeeklySummaryDTO>).ToArray();
             Assert.AreEqual(2, res.Count());
             //--> summary for week 3
             var u2w3 = res.ElementAt(0);
