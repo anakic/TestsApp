@@ -30,5 +30,10 @@ namespace Jogging.Tests.Mocks
         {
             throw new NotImplementedException();
         }
+
+        public Task SignOut()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
