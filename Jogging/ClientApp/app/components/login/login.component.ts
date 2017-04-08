@@ -17,11 +17,19 @@ export class LoginComponent extends OnInit {
 
     constructor(public loginService: LoginService, private router: Router) {
         super();
+        this.isLoaded = false;
         this.isWorking = true;
     }
 
     ngOnInit() {
-        this.loginService.initUserFromServer().subscribe(u=> this.isWorking = false);
+        this.loginService.initialize()
+            .subscribe(u => {
+                this.isWorking = false;
+                this.isLoaded = true;
+            }, e => {
+                this.isWorking = false;
+                this.isLoaded = true;
+            });
     }
 
     public login() {
@@ -30,8 +38,9 @@ export class LoginComponent extends OnInit {
             if (!res.success)
                 this.errorMessage = res.message;
             this.isWorking = false;
-        }, res => {
-            this.errorMessage = (res.json().credentials)[0];
+        }, err => {
+            this.password = "";
+            this.errorMessage = err._body;
             this.isWorking = false;
         });
     }

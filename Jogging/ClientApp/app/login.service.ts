@@ -12,16 +12,16 @@ export class LoginService {
 
     public user: User;
 
-    public initUserFromServer(): Observable<User> {
+    public initialize(): Observable<User> {
         return this.http
-            .get(`/api/Account`, { withCredentials: true })
+            .get(`/api/accounts/current`, { withCredentials: true })
             .map(result => {
                 return this.setUserAndRedirect(result.ok ? result.json() as User : null);
             });
     }
 
     public signout(): Observable<boolean> {
-        return this.http.post(`/api/Account/Signout`, {})
+        return this.http.post(`/api/accounts/signout`, {})
             .map(result => {
                 if (result.ok) {
                     this.setUserAndRedirect(null);
@@ -30,9 +30,9 @@ export class LoginService {
             });
     }
 
-    public login(userName: string, password: string): Observable<LoginResult> {
+    public login(email: string, password: string): Observable<LoginResult> {
         return this.http
-            .post(`/api/Account`, { userName, password })
+            .post(`/api/accounts/login`, { email, password })
             .map(result => {
                 if (result.ok) {
                     var user = this.setUserAndRedirect(result.ok ? result.json() as User : null);
@@ -55,7 +55,6 @@ export class LoginService {
     constructor(private http: Http, private router: Router) {
         this.loginUrl = '/login';
         this.redirectUrl = '/entries';
-        this.initUserFromServer();
     }
 }
 
