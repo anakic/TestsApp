@@ -8,9 +8,10 @@ import { EntriesComponent } from './components/entries/entries.component';
 import { LoginService } from './login.service';
 import { LoginComponent } from './components/login/login.component';
 import { LoginSignoutComponent } from './components/login/login-signout.component';
+import { IsLoggedInGuard } from './auth.guard';
 
 @NgModule({
-    bootstrap: [ AppComponent ],
+    bootstrap: [AppComponent],
     declarations: [
         AppComponent,
         NavMenuComponent,
@@ -18,12 +19,12 @@ import { LoginSignoutComponent } from './components/login/login-signout.componen
         LoginComponent,
         LoginSignoutComponent
     ],
-    providers: [LoginService],
+    providers: [LoginService, IsLoggedInGuard],
     imports: [
         UniversalModule, // Must be first import. This automatically imports BrowserModule, HttpModule, and JsonpModule too.
         RouterModule.forRoot([
-            { path: '', redirectTo: 'login', pathMatch: 'full' },
-            { path: 'entries', component: EntriesComponent },
+            { path: '', redirectTo: 'entries', pathMatch: 'full' },
+            { path: 'entries', component: EntriesComponent, canActivate: [IsLoggedInGuard] },
             { path: 'login', component: LoginComponent },
             { path: '**', redirectTo: 'entries' }
         ]),
