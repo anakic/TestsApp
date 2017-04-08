@@ -3,6 +3,7 @@ using jogging.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Jogging.Tests.Mocks
 {
@@ -23,6 +24,11 @@ namespace Jogging.Tests.Mocks
         public User GetCurrentUser()
         {
             return _userToReturn;
+        }
+
+        public Task<User> LoginAsync(string username, string password)
+        {
+            throw new NotImplementedException();
         }
     }
 }

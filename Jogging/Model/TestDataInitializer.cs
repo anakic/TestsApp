@@ -14,7 +14,7 @@ namespace jogging.Model
             ctx.Database.EnsureDeleted();
             ctx.Database.EnsureCreated();
 
-            var user = new User() { Id = 0, Email = "antonio@jogging.com", FirstName = "Antonio", LastName = "Nakic", Role = UserRole.Manager };
+            var user = new User() { Id = 0, Email = "test@user.com", FirstName = "Test", LastName = "User", Role = UserRole.Manager };
             ctx.Add(user);
             ctx.SaveChanges();
 

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace jogging.Model
@@ -19,12 +22,43 @@ namespace jogging.Model
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public UserRole Role { get; set; }
+        [IgnoreDataMember]
+        public byte[] PasswordHash { get; set; }
+        [IgnoreDataMember]
+        public string Salt { get; set; } = Guid.NewGuid().ToString();
 
         public IEnumerable<Entry> Entries { get; set; }
 
         public bool CanAccessEntriesForUser(int targetUserId)
         {
             return (Id == targetUserId || Role == UserRole.Admin);
+        }
+        
+        public bool IsPasswordValid(string password)
+        {
+            return ByteArrayCompare(GetPasswordHash(password ?? ""), PasswordHash);
+        }
+
+        public void SetPassword(string password)
+        {
+            PasswordHash = GetPasswordHash(password);
+        }
+
+        private byte[] GetPasswordHash(string password)
+        {
+            return MD5.Create().ComputeHash(Encoding.Unicode.GetBytes(password + Salt));
+        }
+
+        private static bool ByteArrayCompare(byte[] a1, byte[] a2)
+        {
+            if (a1.Length != a2.Length)
+                return false;
+
+            for (int i = 0; i < a1.Length; i++)
+                if (a1[i] != a2[i])
+                    return false;
+
+            return true;
         }
     }
 }
