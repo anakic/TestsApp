@@ -1,10 +1,12 @@
 ﻿<div *ngIf="isWorking">
     Working...
 </div>
-<div class="panel panel-primary login-form" *ngIf="!isWorking && isLoaded">
+<div class="panel panel-primary login-form" *ngIf="!isWorking">
     <div class="panel-heading">Login credentials</div>
     <div class="panel-body" (keyup.enter)="login()">
+        <div>Email</div>
         <input class="form-control" name="email" type="text" [(ngModel)]="email" placeholder="user name" />
+        <div>Password</div>
         <input class="form-control" name="password" type="password" [(ngModel)]="password" placeholder="password" />
     </div>
     <div class="panel-footer">

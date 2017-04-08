@@ -8,7 +8,6 @@ import { LoginService } from '../../login.service';
 })
 export class LoginComponent extends OnInit {
 
-    public isLoaded: boolean;
     public isWorking: boolean;
     public errorMessage: string;
 
@@ -17,7 +16,6 @@ export class LoginComponent extends OnInit {
 
     constructor(public loginService: LoginService, private router: Router) {
         super();
-        this.isLoaded = false;
         this.isWorking = true;
     }
 
@@ -25,10 +23,8 @@ export class LoginComponent extends OnInit {
         this.loginService.initialize()
             .subscribe(u => {
                 this.isWorking = false;
-                this.isLoaded = true;
             }, e => {
                 this.isWorking = false;
-                this.isLoaded = true;
             });
     }
 

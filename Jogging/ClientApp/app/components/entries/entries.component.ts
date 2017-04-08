@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 import { LoginService } from '../../login.service';
 
 @Component({
-    selector: 'fetchdata',
     templateUrl: './entries.component.html'
 })
 export class EntriesComponent {
