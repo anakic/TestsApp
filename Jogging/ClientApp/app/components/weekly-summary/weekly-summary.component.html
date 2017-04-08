@@ -1,0 +1,27 @@
+<h1>Weekly report</h1>
+<div>
+    <input [value]="from | date:'yyyy-MM-dd'" (input)="from=parseDate($event.target.value)" type="date" />
+    <input [value]="to | date:'yyyy-MM-dd'" (input)="to=parseDate($event.target.value)" type="date" />
+    <button (click)="filter($event)">Filter</button>
+</div>
+<em *ngIf="!entries">{{ statusMessage }}</em>
+<table class='table' *ngIf="entries">
+    <thead>
+        <tr>
+            <th>Year</th>
+            <th>Week of year</th>
+            <th>Total time</th>
+            <th>Total distance</th>
+            <th>Average speed</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let entry of entries">
+            <td>{{ entry.year }}</td>
+            <td>{{ entry.week }}</td>
+            <td>{{ entry.totalTimeInSeconds }}</td>
+            <td>{{ entry.totalDistanceInMeters }}</td>
+            <td>{{ entry.averageSpeed }}</td>
+        </tr>
+    </tbody>
+</table>

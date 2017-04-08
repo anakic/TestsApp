@@ -9,6 +9,7 @@ import { LoginService } from './login.service';
 import { LoginComponent } from './components/login/login.component';
 import { AdministrationComponent } from './components/administration/administration.component';
 import { LoginSignoutComponent } from './components/login/login-signout.component';
+import { WeeklyReportComponent } from './components/weekly-summary/weekly-summary.component';
 import { IsLoggedInGuard, IsUserAdminGuard } from './auth.guard';
 
 @NgModule({
@@ -19,15 +20,17 @@ import { IsLoggedInGuard, IsUserAdminGuard } from './auth.guard';
         EntriesComponent,
         LoginComponent,
         LoginSignoutComponent,
-        AdministrationComponent
+        AdministrationComponent,
+        WeeklyReportComponent
     ],
     providers: [LoginService, IsLoggedInGuard, IsUserAdminGuard],
     imports: [
         UniversalModule, // Must be first import. This automatically imports BrowserModule, HttpModule, and JsonpModule too.
         RouterModule.forRoot([
             { path: '', redirectTo: 'entries', pathMatch: 'full' },
-            { path: 'entries', component: EntriesComponent, canActivate: [IsLoggedInGuard] },
             { path: 'login', component: LoginComponent },
+            { path: 'entries', component: EntriesComponent, canActivate: [IsLoggedInGuard] },
+            { path: 'weekly-report', component: WeeklyReportComponent, canActivate: [IsLoggedInGuard] },
             { path: 'administration', component: AdministrationComponent, canActivate: [IsUserAdminGuard] },
             { path: '**', redirectTo: 'entries' }
         ]),

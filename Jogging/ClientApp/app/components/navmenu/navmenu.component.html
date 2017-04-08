@@ -14,7 +14,12 @@
             <ul class='nav navbar-nav'>
                 <li [routerLinkActive]="['link-active']">
                     <a [routerLink]="['/entries']">
-                        <span class='glyphicon glyphicon-th-list'></span> Fetch data
+                        <span class='glyphicon glyphicon-time'></span> Jog entries
+                    </a>
+                </li>
+                <li [routerLinkActive]="['link-active']">
+                    <a [routerLink]="['/weekly-report']">
+                        <span class='glyphicon glyphicon-calendar'></span> Weekly report
                     </a>
                 </li>
                 <li [routerLinkActive]="['link-active']" *ngIf="loginService.user.canCrudUsers">
