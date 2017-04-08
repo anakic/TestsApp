@@ -1,0 +1,7 @@
+﻿.login-signout {
+    text-align: right;
+    position: absolute;
+    margin: 10px;
+    right: 10px;
+    z-index: 100;
+}

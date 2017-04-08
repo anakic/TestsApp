@@ -7,6 +7,7 @@ import { NavMenuComponent } from './components/navmenu/navmenu.component';
 import { EntriesComponent } from './components/entries/entries.component';
 import { LoginService } from './login.service';
 import { LoginComponent } from './components/login/login.component';
+import { LoginSignoutComponent } from './components/login/login-signout.component';
 
 @NgModule({
     bootstrap: [ AppComponent ],
@@ -15,6 +16,7 @@ import { LoginComponent } from './components/login/login.component';
         NavMenuComponent,
         EntriesComponent,
         LoginComponent,
+        LoginSignoutComponent
     ],
     providers: [LoginService],
     imports: [
