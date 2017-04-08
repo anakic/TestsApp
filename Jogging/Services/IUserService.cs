@@ -7,5 +7,7 @@ namespace jogging.Services
     {
         User GetCurrentUser();
         Task<User> LoginAsync(string username, string password);
+
+        Task SignOut();
     }
 }

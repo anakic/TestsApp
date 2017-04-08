@@ -34,9 +34,9 @@ namespace jogging.Services
         public async Task<User> LoginAsync(string email, string password)
         {
             var myUser = _context.Users.FindByEmail(email);
-            if (myUser == null || myUser.IsPasswordValid(password))
+            if (myUser == null || !myUser.IsPasswordValid(password))
             {
-                throw new UnauthorizedAccessException("Invalid credentials");
+                return null;
             }
             else
             {
@@ -52,6 +52,11 @@ namespace jogging.Services
                 await _httpContextAccessor.HttpContext.Authentication.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity), props);
                 return myUser;
             }
+        }
+
+        public async Task SignOut()
+        {
+            await _httpContextAccessor.HttpContext.Authentication.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
     }
 }

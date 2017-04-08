@@ -15,6 +15,7 @@ namespace jogging.Model
             ctx.Database.EnsureCreated();
 
             var user = new User() { Id = 0, Email = "test@user.com", FirstName = "Test", LastName = "User", Role = UserRole.Manager };
+            user.SetPassword("pwd");
             ctx.Add(user);
             ctx.SaveChanges();
 

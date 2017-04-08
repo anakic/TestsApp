@@ -18,7 +18,10 @@ namespace jogging
 
         public async Task Invoke(HttpContext context)
         {
-            context.User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.Name, "test@user.com") }, "Basic")); ;
+            //todo #1: remove hardcoded user
+            //todo #2: add basic http security (for postman and non-browser clients)
+            //context.User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.Name, "test@user.com") }, "Basic")); ;
+
             await _next.Invoke(context);
         }
     }

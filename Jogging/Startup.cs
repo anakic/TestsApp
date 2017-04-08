@@ -61,6 +61,8 @@ namespace jogging
 
             app.UseStaticFiles();
 
+            app.UseCookieAuthentication();
+
             app.UseMiddleware<AuthenticationMiddleware>();
 
             app.UseMvc(routes =>

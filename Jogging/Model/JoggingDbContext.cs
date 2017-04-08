@@ -34,7 +34,8 @@ namespace jogging.Model
     {
         public static User FindByEmail(this DbSet<User> users, string email)
         {
-            return users.SingleOrDefault(u => u.Email.ToUpper() == email.ToUpper());
+            var emailSafe = (email ?? "").ToUpper();
+            return users.SingleOrDefault(u => u.Email.ToUpper() == emailSafe);
         }
     }
 }
