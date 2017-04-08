@@ -7,8 +7,9 @@ import { NavMenuComponent } from './components/navmenu/navmenu.component';
 import { EntriesComponent } from './components/entries/entries.component';
 import { LoginService } from './login.service';
 import { LoginComponent } from './components/login/login.component';
+import { AdministrationComponent } from './components/administration/administration.component';
 import { LoginSignoutComponent } from './components/login/login-signout.component';
-import { IsLoggedInGuard } from './auth.guard';
+import { IsLoggedInGuard, IsUserAdminGuard } from './auth.guard';
 
 @NgModule({
     bootstrap: [AppComponent],
@@ -17,15 +18,17 @@ import { IsLoggedInGuard } from './auth.guard';
         NavMenuComponent,
         EntriesComponent,
         LoginComponent,
-        LoginSignoutComponent
+        LoginSignoutComponent,
+        AdministrationComponent
     ],
-    providers: [LoginService, IsLoggedInGuard],
+    providers: [LoginService, IsLoggedInGuard, IsUserAdminGuard],
     imports: [
         UniversalModule, // Must be first import. This automatically imports BrowserModule, HttpModule, and JsonpModule too.
         RouterModule.forRoot([
             { path: '', redirectTo: 'entries', pathMatch: 'full' },
             { path: 'entries', component: EntriesComponent, canActivate: [IsLoggedInGuard] },
             { path: 'login', component: LoginComponent },
+            { path: 'administration', component: AdministrationComponent, canActivate: [IsUserAdminGuard] },
             { path: '**', redirectTo: 'entries' }
         ]),
         FormsModule

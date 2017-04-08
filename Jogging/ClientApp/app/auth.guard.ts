@@ -6,7 +6,7 @@ import { LoginService } from "./login.service";
 @Injectable()
 export class IsLoggedInGuard implements CanActivate {
 
-    constructor(private loginService: LoginService, private router: Router) {}
+    constructor(private loginService: LoginService, private router: Router) { }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
 
@@ -17,5 +17,19 @@ export class IsLoggedInGuard implements CanActivate {
         }
 
         return isLoggedIn;
+    };
+}
+
+@Injectable()
+export class IsUserAdminGuard implements CanActivate {
+
+    constructor(private loginService: LoginService) { }
+
+    canActivate(): boolean {
+
+        if (!this.loginService.user.canCrudUsers)
+            alert('User does not have permission to view this resource');
+
+        return  this.loginService.user.canCrudUsers;
     };
 }

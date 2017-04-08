@@ -17,6 +17,11 @@
                         <span class='glyphicon glyphicon-th-list'></span> Fetch data
                     </a>
                 </li>
+                <li [routerLinkActive]="['link-active']" *ngIf="loginService.user.canCrudUsers">
+                    <a [routerLink]="['/administration']">
+                        <span class='glyphicon glyphicon-adjust'></span> Administration
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
