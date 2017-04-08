@@ -8,10 +8,11 @@ using jogging.Services;
 
 namespace jogging.Controllers
 {
+    [Route("api/[controller]")]
     public class AccountController : Controller
     {
         IUserService _userService;
-        public AccountController(UserService userService)
+        public AccountController(IUserService userService)
         {
             _userService = userService;
         }
