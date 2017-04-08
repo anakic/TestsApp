@@ -135,5 +135,49 @@ namespace Jogging.Tests
             Assert.AreEqual(res.UserEmail, _regularUser1.Email);
             Assert.AreEqual(res.UserId, _regularUser1.Id);
         }
+
+        [TestMethod]
+        public void WeeklySummaryIsCorrect()
+        {
+            DateTime dt1 = new DateTime(2020, 1, 12);//week2
+            DateTime dt2 = new DateTime(2020, 1, 18);//week3
+            DateTime dt3 = new DateTime(2020, 1, 19);//week3
+
+            Entry u1e1, u2e1, u2e2, u2e3;//u2e2 means user2:entry2
+            _userService.SetUser(_adminUser.Email);
+            _context.Add(u1e1 = new Entry() { Id = 1, DistanceInMeters = 999, TimeInSeconds = 600, Date = dt1, UserId = _regularUser1.Id, User = _regularUser1 });
+            _context.Add(u2e1 = new Entry() { Id = 2, DistanceInMeters = 1999, TimeInSeconds = 1000, Date = dt1, UserId = _regularUser2.Id, User = _regularUser2 });
+            _context.Add(u2e2 = new Entry() { Id = 3, DistanceInMeters = 2999, TimeInSeconds = 1500, Date = dt2, UserId = _regularUser2.Id, User = _regularUser2 });
+            _context.Add(u2e3 = new Entry() { Id = 4, DistanceInMeters = 3999, TimeInSeconds = 1900, Date = dt3, UserId = _regularUser2.Id, User = _regularUser2 });
+            _context.SaveChanges();
+
+            //user 1 summary (only week2)
+            _userService.SetUser(_regularUser1.Email);
+            var res = ((_controller.WeeklySummary(dt1, dt3) as OkObjectResult).Value as IEnumerable<WeeklySummaryDTO>).ToArray();
+            Assert.AreEqual(2020, res.Single().Year);
+            Assert.AreEqual(2, res.Single().Week);
+            Assert.AreEqual(u1e1.DistanceInMeters, res.Single().TotalDistanceInMeters);
+            Assert.AreEqual(u1e1.TimeInSeconds, res.Single().TotalTimeInSecoonds);
+            Assert.AreEqual(u1e1.DistanceInMeters / (float)u1e1.TimeInSeconds, res.Single().AverageSpeed);
+
+            //user 2
+            _userService.SetUser(_regularUser2.Email);
+            res = ((_controller.WeeklySummary(dt1, dt3) as OkObjectResult).Value as IEnumerable<WeeklySummaryDTO>).ToArray();
+            Assert.AreEqual(2, res.Count());
+            //--> summary for week 2
+            var u2w2 = res.ElementAt(0);
+            Assert.AreEqual(2020, u2w2.Year);
+            Assert.AreEqual(2, u2w2.Week);
+            Assert.AreEqual(u2e1.DistanceInMeters, u2w2.TotalDistanceInMeters);
+            Assert.AreEqual(u2e1.TimeInSeconds, u2w2.TotalTimeInSecoonds);
+            Assert.AreEqual(u2e1.DistanceInMeters / (float)u2e1.TimeInSeconds, u2w2.AverageSpeed);
+            //--> summary for week 3
+            var u2w3 = res.ElementAt(1);
+            Assert.AreEqual(2020, u2w3.Year);
+            Assert.AreEqual(3, u2w3.Week);
+            Assert.AreEqual(u2e2.DistanceInMeters + u2e3.DistanceInMeters, u2w3.TotalDistanceInMeters);
+            Assert.AreEqual(u2e2.TimeInSeconds + u2e3.TimeInSeconds, u2w3.TotalTimeInSecoonds);
+            Assert.AreEqual((u2e2.DistanceInMeters + u2e3.DistanceInMeters) / (float)(u2e2.TimeInSeconds + u2e3.TimeInSeconds), u2w3.AverageSpeed);
+        }
     }
 }
