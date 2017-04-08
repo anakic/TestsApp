@@ -1,7 +1,9 @@
-﻿namespace jogging.Services
+﻿using jogging.Model;
+
+namespace jogging.Services
 {
     public interface IUserService
     {
-        string GetCurrentUserIdentity();
+        User GetCurrentUser();
     }
 }

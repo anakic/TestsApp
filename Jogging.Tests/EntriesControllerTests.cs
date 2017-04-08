@@ -31,7 +31,7 @@ namespace Jogging.Tests
             _context.Users.Add(_adminUser = new User() { Id = 345, Email = "le@admin.com", FirstName = "Le", LastName = "Admin", Role = UserRole.Admin });
             _context.SaveChanges();
 
-            _userService = new DummyUserService(_regularUser1.Email);
+            _userService = new DummyUserService(_regularUser1);
             _controller = new EntriesController(_context, _userService);
         }
 
@@ -63,7 +63,7 @@ namespace Jogging.Tests
         {
             DateTime dt1 = new DateTime(2020, 1, 16);
             DateTime dt2 = new DateTime(2020, 1, 16);
-            
+
             //add entry for user1
             _context.Add(new Entry() { Id = 1, Date = dt1, UserId = _regularUser1.Id });
             //add two entries for user 2
@@ -72,12 +72,12 @@ namespace Jogging.Tests
             _context.SaveChanges();
 
             //verify only user1 entries retrieved when user1 active
-            _userService.SetUser(_regularUser1.Email);
+            _userService.SetUser(_regularUser1);
             var res = ((_controller.Get(dt1, dt2, _regularUser1.Id) as OkObjectResult).Value as IEnumerable<EntryDTO>).ToArray();
             Assert.AreEqual(1, res.Single().Id);
 
             //switch to user2 and verify only user2 entries returned
-            _userService.SetUser(_regularUser2.Email);
+            _userService.SetUser(_regularUser2);
             res = ((_controller.Get(dt1, dt2, _regularUser2.Id) as OkObjectResult).Value as IEnumerable<EntryDTO>).ToArray();
             Assert.AreEqual(1, res.Count(e => e.Id == 2));
             Assert.AreEqual(1, res.Count(e => e.Id == 3));
@@ -100,7 +100,7 @@ namespace Jogging.Tests
         {
             DateTime dt1 = new DateTime(2020, 1, 16);
 
-            _userService.SetUser(_regularUser1.Email);
+            _userService.SetUser(_regularUser1);
             _context.Add(new Entry() { Id = 1, Date = dt1, UserId = _regularUser1.Id });
             _context.Add(new Entry() { Id = 2, Date = dt1, UserId = _regularUser1.Id });
             _context.SaveChanges();
@@ -124,12 +124,12 @@ namespace Jogging.Tests
             _context.SaveChanges();
 
             //verify only user1 entries retrieved when user1 active
-            _userService.SetUser(_regularUser1.Email);
+            _userService.SetUser(_regularUser1);
             var res = ((_controller.Get(dt1, dt2, null) as OkObjectResult).Value as IEnumerable<EntryDTO>).ToArray();
             Assert.AreEqual(1, res.Single().Id);
 
             //switch to user2 and verify only user2 entries returned
-            _userService.SetUser(_regularUser2.Email);
+            _userService.SetUser(_regularUser2);
             res = ((_controller.Get(dt1, dt2, null) as OkObjectResult).Value as IEnumerable<EntryDTO>).ToArray();
             Assert.AreEqual(1, res.Count(e => e.Id == 2));
             Assert.AreEqual(1, res.Count(e => e.Id == 3));
@@ -141,7 +141,7 @@ namespace Jogging.Tests
             DateTime dt1 = new DateTime(2020, 1, 16);
             DateTime dt2 = new DateTime(2020, 1, 17);
 
-            _userService.SetUser(_adminUser.Email);
+            _userService.SetUser(_adminUser);
             _context.Add(new Entry() { Id = 1, Date = dt1, UserId = _regularUser1.Id });
             _context.Add(new Entry() { Id = 2, Date = dt1, UserId = _regularUser2.Id });
             _context.Add(new Entry() { Id = 3, Date = dt2, UserId = _regularUser2.Id });
@@ -184,7 +184,7 @@ namespace Jogging.Tests
             DateTime dt3 = new DateTime(2020, 1, 19);//week3
 
             Entry u1e1, u2e1, u2e2, u2e3;//u2e2 means user2:entry2
-            _userService.SetUser(_adminUser.Email);
+            _userService.SetUser(_adminUser);
             _context.Add(u1e1 = new Entry() { Id = 1, DistanceInMeters = 999, TimeInSeconds = 600, Date = dt1, UserId = _regularUser1.Id, User = _regularUser1 });
             _context.Add(u2e1 = new Entry() { Id = 2, DistanceInMeters = 1999, TimeInSeconds = 1000, Date = dt1, UserId = _regularUser2.Id, User = _regularUser2 });
             _context.Add(u2e2 = new Entry() { Id = 3, DistanceInMeters = 2999, TimeInSeconds = 1500, Date = dt2, UserId = _regularUser2.Id, User = _regularUser2 });
@@ -192,7 +192,7 @@ namespace Jogging.Tests
             _context.SaveChanges();
 
             //user 1 summary (only week2)
-            _userService.SetUser(_regularUser1.Email);
+            _userService.SetUser(_regularUser1);
             var res = ((_controller.WeeklySummary(dt1, dt3) as OkObjectResult).Value as IEnumerable<WeeklySummaryDTO>).ToArray();
             Assert.AreEqual(2020, res.Single().Year);
             Assert.AreEqual(2, res.Single().Week);
@@ -201,7 +201,7 @@ namespace Jogging.Tests
             Assert.AreEqual(u1e1.DistanceInMeters / (float)u1e1.TimeInSeconds, res.Single().AverageSpeed);
 
             //user 2
-            _userService.SetUser(_regularUser2.Email);
+            _userService.SetUser(_regularUser2);
             res = ((_controller.WeeklySummary(dt1, dt3) as OkObjectResult).Value as IEnumerable<WeeklySummaryDTO>).ToArray();
             Assert.AreEqual(2, res.Count());
             //--> summary for week 2

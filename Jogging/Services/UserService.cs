@@ -17,6 +17,11 @@ namespace jogging.Services
             _context = context;
         }
 
+        public User GetCurrentUser()
+        {
+            return _context.Users.FindByEmail(GetCurrentUserIdentity());
+        }
+
         public string GetCurrentUserIdentity()
         {
             return _httpContextAccessor.HttpContext.User?.Identity?.Name;

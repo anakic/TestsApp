@@ -1,4 +1,5 @@
-﻿using jogging.Services;
+﻿using jogging.Model;
+using jogging.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,19 +8,19 @@ namespace Jogging.Tests.Mocks
 {
     class DummyUserService : IUserService
     {
-        string _userToReturn;
+        User _userToReturn;
 
-        public DummyUserService(string userToReturn)
+        public DummyUserService(User userToReturn)
         {
             SetUser(userToReturn);
         }
 
-        public void SetUser(string userToReturn)
+        public void SetUser(User userToReturn)
         {
             _userToReturn = userToReturn;
         }
 
-        public string GetCurrentUserIdentity()
+        public User GetCurrentUser()
         {
             return _userToReturn;
         }

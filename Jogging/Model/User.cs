@@ -21,5 +21,10 @@ namespace jogging.Model
         public UserRole Role { get; set; }
 
         public IEnumerable<Entry> Entries { get; set; }
+
+        public bool CanAccessEntriesForUser(int targetUserId)
+        {
+            return (Id == targetUserId || Role == UserRole.Admin);
+        }
     }
 }
