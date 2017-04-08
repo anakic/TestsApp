@@ -204,20 +204,147 @@ namespace Jogging.Tests
             _userService.SetUser(_regularUser2);
             res = ((_controller.WeeklySummary(dt1, dt3) as OkObjectResult).Value as IEnumerable<WeeklySummaryDTO>).ToArray();
             Assert.AreEqual(2, res.Count());
-            //--> summary for week 2
-            var u2w2 = res.ElementAt(0);
-            Assert.AreEqual(2020, u2w2.Year);
-            Assert.AreEqual(2, u2w2.Week);
-            Assert.AreEqual(u2e1.DistanceInMeters, u2w2.TotalDistanceInMeters);
-            Assert.AreEqual(u2e1.TimeInSeconds, u2w2.TotalTimeInSecoonds);
-            Assert.AreEqual(u2e1.DistanceInMeters / (float)u2e1.TimeInSeconds, u2w2.AverageSpeed);
             //--> summary for week 3
-            var u2w3 = res.ElementAt(1);
+            var u2w3 = res.ElementAt(0);
             Assert.AreEqual(2020, u2w3.Year);
             Assert.AreEqual(3, u2w3.Week);
             Assert.AreEqual(u2e2.DistanceInMeters + u2e3.DistanceInMeters, u2w3.TotalDistanceInMeters);
             Assert.AreEqual(u2e2.TimeInSeconds + u2e3.TimeInSeconds, u2w3.TotalTimeInSecoonds);
             Assert.AreEqual((u2e2.DistanceInMeters + u2e3.DistanceInMeters) / (float)(u2e2.TimeInSeconds + u2e3.TimeInSeconds), u2w3.AverageSpeed);
+            //--> summary for week 2
+            var u2w2 = res.ElementAt(1);
+            Assert.AreEqual(2020, u2w2.Year);
+            Assert.AreEqual(2, u2w2.Week);
+            Assert.AreEqual(u2e1.DistanceInMeters, u2w2.TotalDistanceInMeters);
+            Assert.AreEqual(u2e1.TimeInSeconds, u2w2.TotalTimeInSecoonds);
+            Assert.AreEqual(u2e1.DistanceInMeters / (float)u2e1.TimeInSeconds, u2w2.AverageSpeed);
+        }
+
+
+        [TestMethod]
+        public void UpdatesWithValidData()
+        {
+            DateTime dtInitial = new DateTime(2020, 1, 1);
+            DateTime dtChanged = new DateTime(2020, 2, 2);
+
+            Entry entry;
+            _userService.SetUser(_regularUser1);
+            _context.Add(entry = new Entry() { Id = 123, Date = dtInitial, UserId = _regularUser1.Id, DistanceInMeters = 55, TimeInSeconds = 99 });
+            _context.SaveChanges();
+
+            _controller.Put(new EntryUpdateDTO()
+            {
+                Id = entry.Id,
+                DistanceInMeters = entry.DistanceInMeters + 101,
+                TimeInSeconds = entry.TimeInSeconds + 102,
+                UserId = entry.UserId,
+                Date = dtChanged
+            });
+
+            var res = ((_controller.Get(dtChanged, dtChanged, _regularUser1.Id) as OkObjectResult).Value as IEnumerable<EntryDTO>).ToArray();
+            Assert.AreEqual(123, res.Single().Id);
+            Assert.AreEqual(156, res.Single().DistanceInMeters);
+            Assert.AreEqual(201, res.Single().TimeInSeconds);
+            Assert.AreEqual(dtChanged, res.Single().Date);
+        }
+        
+        [TestMethod]
+        public void UpdateWithIvalidIdFails()
+        {
+            DateTime dtInitial = new DateTime(2020, 1, 1);
+            DateTime dtChanged = new DateTime(2020, 2, 2);
+
+            Entry entry;
+            _context.Add(entry = new Entry() { Id = 123, Date = dtInitial, UserId = _regularUser1.Id, DistanceInMeters = 55, TimeInSeconds = 99 });
+            _context.SaveChanges();
+
+            _userService.SetUser(_regularUser1);
+            var res = _controller.Put(new EntryUpdateDTO()
+            {
+                Id = entry.Id + 1,//invalid id
+                DistanceInMeters = entry.DistanceInMeters + 101,
+                TimeInSeconds = entry.TimeInSeconds + 102,
+                UserId = entry.UserId,
+                Date = dtChanged
+            });
+
+            Assert.AreEqual((res as BadRequestObjectResult).Value, "Invalid entry ID.");
+        }
+
+        [TestMethod]
+        public void MoveEntryToOtherUserFailsIfNotAdmin()
+        {
+            DateTime dtInitial = new DateTime(2020, 1, 1);
+            DateTime dtChanged = new DateTime(2020, 2, 2);
+
+            Entry entry;
+            _context.Add(entry = new Entry() { Id = 123, Date = dtInitial, UserId = _regularUser1.Id, DistanceInMeters = 55, TimeInSeconds = 99 });
+            _context.SaveChanges();
+
+            _userService.SetUser(_regularUser1);
+            var res = _controller.Put(new EntryUpdateDTO()
+            {
+                Id = entry.Id,
+                DistanceInMeters = entry.DistanceInMeters + 101,
+                TimeInSeconds = entry.TimeInSeconds + 102,
+                UserId = _regularUser2.Id,
+                Date = dtChanged
+            });
+
+            Assert.AreEqual((res as BadRequestObjectResult).Value, "Only admin users may change the user an entry belongs to.");
+        }
+
+        [TestMethod]
+        public void MoveEntryFromOtherUserFailsIfNotAdmin()
+        {
+            DateTime dtInitial = new DateTime(2020, 1, 1);
+            DateTime dtChanged = new DateTime(2020, 2, 2);
+
+            Entry entry;
+            _context.Add(entry = new Entry() { Id = 123, Date = dtInitial, UserId = _regularUser1.Id, DistanceInMeters = 55, TimeInSeconds = 99 });
+            _context.SaveChanges();
+
+            _userService.SetUser(_regularUser2);
+            var res = _controller.Put(new EntryUpdateDTO()
+            {
+                Id = entry.Id,
+                DistanceInMeters = entry.DistanceInMeters + 101,
+                TimeInSeconds = entry.TimeInSeconds + 102,
+                UserId = _regularUser2.Id,
+                Date = dtChanged
+            });
+
+            Assert.AreEqual((res as BadRequestObjectResult).Value, "Only admin users may change the user an entry belongs to.");
+        }
+
+        [TestMethod]
+        public void ChangeUserOnEntrySucceedsIfAdmin()
+        {
+            DateTime dtInitial = new DateTime(2020, 1, 1);
+            DateTime dtChanged = new DateTime(2020, 2, 2);
+
+            Entry entry;
+            _context.Add(entry = new Entry() { Id = 123, Date = dtInitial, UserId = _regularUser1.Id, DistanceInMeters = 55, TimeInSeconds = 99 });
+            _context.SaveChanges();
+
+            _userService.SetUser(_adminUser);
+            EntryUpdateDTO updateDTO;
+            var res = _controller.Put(updateDTO = new EntryUpdateDTO()
+            {
+                Id = entry.Id,
+                DistanceInMeters = entry.DistanceInMeters + 101,
+                TimeInSeconds = entry.TimeInSeconds + 102,
+                UserId = _regularUser2.Id,
+                Date = dtChanged
+            });
+
+            Assert.IsInstanceOfType(res, typeof(OkResult));
+
+            var res2 = ((_controller.Get(dtChanged, dtChanged, _regularUser2.Id) as OkObjectResult).Value as IEnumerable<EntryDTO>).ToArray();
+            Assert.AreEqual(updateDTO.Id, res2.Single().Id);
+            Assert.AreEqual(updateDTO.DistanceInMeters, res2.Single().DistanceInMeters);
+            Assert.AreEqual(updateDTO.TimeInSeconds, res2.Single().TimeInSeconds);
+            Assert.AreEqual(updateDTO.Date, res2.Single().Date);
         }
     }
 }

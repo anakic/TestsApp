@@ -21,32 +21,57 @@ namespace jogging.Controllers
             _userService = userService;
         }
 
+        [HttpPut()]
+        public IActionResult Put([FromBody]EntryUpdateDTO updatedEntryDTO)
+        {
+            var entry = _context.Entries.Find(updatedEntryDTO.Id);
+            var currentUser = _userService.GetCurrentUser();
+            if (entry == null)
+            {
+                return BadRequest("Invalid entry ID.");
+            }//if the current user is not the admin, we require both the current and new userId to be the same as current userID in order to allow the change
+            else if (currentUser.Role != UserRole.Admin && (currentUser.Id != updatedEntryDTO.UserId || entry.UserId != currentUser.Id))
+            {
+                return BadRequest("Only admin users may change the user an entry belongs to.");
+            }
+            else
+            {
+                entry.Date = updatedEntryDTO.Date;
+                entry.DistanceInMeters = updatedEntryDTO.DistanceInMeters;
+                entry.TimeInSeconds = updatedEntryDTO.TimeInSeconds;
+                entry.UserId = updatedEntryDTO.UserId;
+                _context.SaveChanges();
+                return Ok();
+            }
+        }
+
         [HttpGet]
         public IActionResult Get(DateTime from, DateTime to, int? userId)
         {
-            var currentUser = _context.Users.FindByEmail(_userService.GetCurrentUserIdentity());
-            int targetUserId = userId ?? currentUser.Id;
-            if (currentUser.Role != UserRole.Admin && targetUserId != currentUser.Id)
+            var currentUser = _userService.GetCurrentUser();
+            userId = userId ?? currentUser.Id;//assume current user if not specified
+
+            if (currentUser.CanAccessEntriesForUser(userId.Value) == false)
             {
-                ModelState.AddModelError(nameof(userId), "Access denied");
-                return BadRequest(ModelState);
+                return BadRequest("Access denied");
             }
-
-            var entries = _context.Entries
-                .Where(e => e.Date >= from && e.Date <= to)
-                .Where(e => e.UserId == targetUserId)
-                .OrderByDescending(e=>e.Date)
-                .Select(e => new EntryDTO()
-                {
-                    Id = e.Id,
-                    UserId = e.User.Id,
-                    Date = e.Date,
-                    DistanceInMeters = e.DistanceInMeters,
-                    TimeInSeconds = e.TimeInSeconds,
-                    UserEmail = e.User.Email,
-                });
-
-            return Ok(entries);
+            else
+            {
+                var entries = _context.Entries
+                    .Where(e => e.Date >= from && e.Date <= to)
+                    .Where(e => e.UserId == userId.Value)
+                    .OrderByDescending(e => e.Date)
+                    .Select(e => new EntryDTO()
+                    {
+                        Id = e.Id,
+                        UserId = e.User.Id,
+                        Date = e.Date,
+                        DistanceInMeters = e.DistanceInMeters,
+                        TimeInSeconds = e.TimeInSeconds,
+                        UserEmail = e.User.Email,
+                    });
+                return Ok(entries);
+            }
         }
 
         [HttpDelete("{id}")]
@@ -61,7 +86,7 @@ namespace jogging.Controllers
         public IActionResult WeeklySummary(DateTime from, DateTime to)
         {
             var summaries = _context.Entries.Where(e => e.Date >= from && e.Date <= to)
-                .Where(e => e.User.Email.ToUpper() == _userService.GetCurrentUserIdentity().ToUpper())
+                .Where(e => e.User.Email.ToUpper() == _userService.GetCurrentUser().Email.ToUpper())
                 .GroupBy(e => new { Year = e.Date.Year, Week = CalculateWeekOfYear(e.Date) })
                 .Select(g => new WeeklySummaryDTO
                 {
@@ -70,7 +95,8 @@ namespace jogging.Controllers
                     TotalDistanceInMeters = g.Sum(e => e.DistanceInMeters),
                     TotalTimeInSecoonds = g.Sum(e => e.TimeInSeconds)
                 })
-                .OrderByDescending(e=>e.Year).ThenByDescending(e=>e.Week);
+                .OrderByDescending(e => e.Year)
+                .ThenByDescending(e => e.Week);
 
             return Ok(summaries);
         }
@@ -90,6 +116,23 @@ namespace jogging.Controllers
         public int TotalDistanceInMeters { get; set; }
         public int TotalTimeInSecoonds { get; set; }
         public float AverageSpeed { get { return TotalDistanceInMeters / (float)TotalTimeInSecoonds; } }
+    }
+
+    public class EntryUpdateDTO
+    {
+        public int Id { get; set; }
+        public int UserId { get; set; }
+        public DateTime Date { get; set; }
+        public int DistanceInMeters { get; set; }
+        public int TimeInSeconds { get; set; }
+    }
+
+    public class EntryNewDTO
+    {
+        public int UserId { get; set; }
+        public DateTime Date { get; set; }
+        public int DistanceInMeters { get; set; }
+        public int TimeInSeconds { get; set; }
     }
 
     public class EntryDTO
