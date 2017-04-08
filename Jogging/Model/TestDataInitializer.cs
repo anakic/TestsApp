@@ -11,9 +11,8 @@ namespace jogging.Model
 
         public static void Initialize(JoggingDbContext ctx)
         {
-            ctx.RemoveRange(ctx.Entries);
-            ctx.Users.RemoveRange(ctx.Users);
-            ctx.SaveChanges();
+            ctx.Database.EnsureDeleted();
+            ctx.Database.EnsureCreated();
 
             var user = new User() { Id = 0, Email = "antonio@jogging.com", FirstName = "Antonio", LastName = "Nakic", Role = UserRole.Manager };
             ctx.Add(user);

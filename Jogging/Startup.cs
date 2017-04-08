@@ -52,8 +52,7 @@ namespace jogging
                     HotModuleReplacement = true
                 });
 
-                ctx.Database.EnsureCreated();
-                TestDatanitializer.Initialize(ctx);
+                //TestDatanitializer.Initialize(ctx);
             }
             else
             {
