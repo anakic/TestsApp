@@ -14,9 +14,18 @@ namespace jogging.Model
             ctx.Database.EnsureDeleted();
             ctx.Database.EnsureCreated();
 
-            var user = new User() { Id = 0, Email = "test@user.com", FirstName = "Test", LastName = "User", Role = UserRole.Manager };
+            var user = new User() { Id = 0, Email = "regular@user.com", FirstName = "Peon", LastName = "User", Role = UserRole.User };
             user.SetPassword("pwd");
             ctx.Add(user);
+
+            var manager = new User() { Id = 0, Email = "manager@user.com", FirstName = "Bishop", LastName = "User", Role = UserRole.Manager };
+            manager.SetPassword("pwd");
+            ctx.Add(manager);
+
+            var admin = new User() { Id = 0, Email = "admin@user.com", FirstName = "King", LastName = "User", Role = UserRole.Admin };
+            admin.SetPassword("pwd");
+            ctx.Add(admin);
+
             ctx.SaveChanges();
 
             IEnumerable<Entry> _entries = _entries = Enumerable.Range(1, 500)
