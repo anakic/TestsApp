@@ -109,7 +109,7 @@ namespace jogging.Controllers
         }
 
         [HttpGet("[action]")]
-        public IActionResult WeeklySummary(DateTime from, DateTime to)
+        public IActionResult WeeklySummaries(DateTime from, DateTime to)
         {
             var summaries = _context.Entries.Where(e => e.Date >= from && e.Date <= to)
                 .Where(e => e.User.Email.ToUpper() == _userService.GetCurrentUser().Email.ToUpper())
@@ -119,7 +119,7 @@ namespace jogging.Controllers
                     Year = g.Key.Year,
                     Week = g.Key.Week,
                     TotalDistanceInMeters = g.Sum(e => e.DistanceInMeters),
-                    TotalTimeInSecoonds = g.Sum(e => e.TimeInSeconds)
+                    TotalTimeInSeconds = g.Sum(e => e.TimeInSeconds)
                 })
                 .OrderByDescending(e => e.Year)
                 .ThenByDescending(e => e.Week);
@@ -141,8 +141,8 @@ namespace jogging.Controllers
         public int Year { get; set; }
         public int Week { get; set; }
         public int TotalDistanceInMeters { get; set; }
-        public int TotalTimeInSecoonds { get; set; }
-        public float AverageSpeed { get { return TotalDistanceInMeters / (float)TotalTimeInSecoonds; } }
+        public int TotalTimeInSeconds { get; set; }
+        public float AverageSpeed { get { return TotalDistanceInMeters / (float)TotalTimeInSeconds; } }
     }
 
     public class EntryUpdateDTO

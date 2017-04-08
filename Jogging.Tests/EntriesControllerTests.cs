@@ -197,7 +197,7 @@ namespace Jogging.Tests
             Assert.AreEqual(2020, res.Single().Year);
             Assert.AreEqual(2, res.Single().Week);
             Assert.AreEqual(u1e1.DistanceInMeters, res.Single().TotalDistanceInMeters);
-            Assert.AreEqual(u1e1.TimeInSeconds, res.Single().TotalTimeInSecoonds);
+            Assert.AreEqual(u1e1.TimeInSeconds, res.Single().TotalTimeInSeconds);
             Assert.AreEqual(u1e1.DistanceInMeters / (float)u1e1.TimeInSeconds, res.Single().AverageSpeed);
 
             //user 2
@@ -209,14 +209,14 @@ namespace Jogging.Tests
             Assert.AreEqual(2020, u2w3.Year);
             Assert.AreEqual(3, u2w3.Week);
             Assert.AreEqual(u2e2.DistanceInMeters + u2e3.DistanceInMeters, u2w3.TotalDistanceInMeters);
-            Assert.AreEqual(u2e2.TimeInSeconds + u2e3.TimeInSeconds, u2w3.TotalTimeInSecoonds);
+            Assert.AreEqual(u2e2.TimeInSeconds + u2e3.TimeInSeconds, u2w3.TotalTimeInSeconds);
             Assert.AreEqual((u2e2.DistanceInMeters + u2e3.DistanceInMeters) / (float)(u2e2.TimeInSeconds + u2e3.TimeInSeconds), u2w3.AverageSpeed);
             //--> summary for week 2
             var u2w2 = res.ElementAt(1);
             Assert.AreEqual(2020, u2w2.Year);
             Assert.AreEqual(2, u2w2.Week);
             Assert.AreEqual(u2e1.DistanceInMeters, u2w2.TotalDistanceInMeters);
-            Assert.AreEqual(u2e1.TimeInSeconds, u2w2.TotalTimeInSecoonds);
+            Assert.AreEqual(u2e1.TimeInSeconds, u2w2.TotalTimeInSeconds);
             Assert.AreEqual(u2e1.DistanceInMeters / (float)u2e1.TimeInSeconds, u2w2.AverageSpeed);
         }
 
