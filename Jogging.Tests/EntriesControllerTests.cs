@@ -23,13 +23,8 @@ namespace Jogging.Tests
         [TestInitialize()]
         public void Initialize()
         {
-            var optionsBuilder = new DbContextOptionsBuilder<JoggingDbContext>();
-            optionsBuilder.UseInMemoryDatabase();
-            _context = new JoggingDbContext(optionsBuilder.Options);
-
-            _context.Users.RemoveRange(_context.Users);
-            _context.Entries.RemoveRange(_context.Entries);
-            _context.SaveChanges();
+            _context = new JoggingDbContext(new DbContextOptionsBuilder<JoggingDbContext>().UseInMemoryDatabase().Options);
+            _context.Database.EnsureDeleted();//make sure we don't share state between tests
 
             _context.Users.Add(_regularUser1 = new User() { Id = 123, Email = "regular1@user1.com1", FirstName = "Joe", LastName = "User", Role = UserRole.User });
             _context.Users.Add(_regularUser2 = new User() { Id = 234, Email = "regular2@user2.com2", FirstName = "Moe", LastName = "User", Role = UserRole.User });
