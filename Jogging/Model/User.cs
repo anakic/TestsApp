@@ -22,6 +22,23 @@ namespace jogging.Model
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public UserRole Role { get; set; }
+
+        public bool CanCrudUsers
+        {
+            get
+            {
+                return Role != UserRole.User;
+            }
+        }
+
+        public bool CanCrudAllEntries
+        {
+            get
+            {
+                return Role == UserRole.Admin;
+            }
+        }
+
         [IgnoreDataMember]
         public byte[] PasswordHash { get; set; }
         [IgnoreDataMember]
@@ -31,9 +48,9 @@ namespace jogging.Model
 
         public bool CanAccessEntriesForUser(int targetUserId)
         {
-            return (Id == targetUserId || Role == UserRole.Admin);
+            return (Id == targetUserId || CanCrudAllEntries);
         }
-        
+
         public bool IsPasswordValid(string password)
         {
             return ByteArrayCompare(GetPasswordHash(password ?? ""), PasswordHash);
