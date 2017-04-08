@@ -34,6 +34,7 @@ namespace jogging.Controllers
             var entries = _context.Entries
                 .Where(e => e.Date >= from && e.Date <= to)
                 .Where(e => e.UserId == userId)
+                .OrderByDescending(e=>e.Date)
                 .Select(e => new EntryDTO()
                 {
                     Id = e.Id,
@@ -42,7 +43,6 @@ namespace jogging.Controllers
                     DistanceInMeters = e.DistanceInMeters,
                     TimeInSeconds = e.TimeInSeconds,
                     UserEmail = e.User.Email,
-                    AverageSpeed = e.DistanceInMeters / (float)e.TimeInSeconds
                 });
 
             return Ok(entries);
@@ -54,15 +54,14 @@ namespace jogging.Controllers
             var summaries = _context.Entries.Where(e => e.Date >= from && e.Date <= to)
                 .Where(e => e.User.Email.ToUpper() == _userService.GetCurrentUserIdentity().ToUpper())
                 .GroupBy(e => new { Year = e.Date.Year, Week = CalculateWeekOfYear(e.Date) })
-                .Where(g=>g.Count() > 0)
                 .Select(g => new WeeklySummaryDTO
                 {
                     Year = g.Key.Year,
                     Week = g.Key.Week,
                     TotalDistanceInMeters = g.Sum(e => e.DistanceInMeters),
-                    TotalTimeInSecoonds = g.Sum(e => e.TimeInSeconds),
-                    AverageSpeed = g.Sum(e => e.DistanceInMeters) / (float)g.Sum(e => e.TimeInSeconds)
-                });
+                    TotalTimeInSecoonds = g.Sum(e => e.TimeInSeconds)
+                })
+                .OrderByDescending(e=>e.Year).ThenByDescending(e=>e.Week);
 
             return Ok(summaries);
         }
@@ -81,12 +80,11 @@ namespace jogging.Controllers
         public int Week { get; set; }
         public int TotalDistanceInMeters { get; set; }
         public int TotalTimeInSecoonds { get; set; }
-        public float AverageSpeed { get; set; }
+        public float AverageSpeed { get { return TotalDistanceInMeters / (float)TotalTimeInSecoonds; } }
     }
 
     public class EntryDTO
     {
-        public float AverageSpeed { get; set; }
         public string UserEmail { get; set; }
 
         public int Id { get; set; }
@@ -94,6 +92,8 @@ namespace jogging.Controllers
         public int DistanceInMeters { get; set; }
         public int TimeInSeconds { get; set; }
         public int UserId { get; set; }
+
+        public float AverageSpeed { get { return DistanceInMeters / (float)TimeInSeconds; } }
 
         public EntryDTO() { }
     }
