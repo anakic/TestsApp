@@ -1,0 +1,30 @@
+<h1>Jogging entries</h1>
+
+<div>
+    <input [value]="from | date:'yyyy-MM-dd'" (input)="from=parseDate($event.target.value)" type="date" />
+    <input [value]="to | date:'yyyy-MM-dd'" (input)="to=parseDate($event.target.value)" type="date" />
+    <button (click)="filter()">Filter</button>
+</div>
+
+<em *ngIf="fetchStatus == 1">Working...</em>
+
+<em *ngIf="message">{{message}}</em>
+
+<table class='table' *ngIf="fetchStatus == 2">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Distance</th>
+            <th>Time</th>
+            <th>Speed</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let entry of entries">
+            <td>{{ entry.date }}</td>
+            <td>{{ entry.distanceInMeters }}</td>
+            <td>{{ entry.timeInSeconds }}</td>
+            <td>{{ entry.averageSpeed }}</td>
+        </tr>
+    </tbody>
+</table>
