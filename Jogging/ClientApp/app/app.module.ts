@@ -6,6 +6,7 @@ import { AppComponent } from './components/app/app.component'
 import { NavMenuComponent } from './components/navmenu/navmenu.component';
 import { EntriesComponent } from './components/entries/entries.component';
 import { LoginService } from './login.service';
+import { LoginComponent } from './components/login/login.component';
 
 @NgModule({
     bootstrap: [ AppComponent ],
@@ -13,13 +14,15 @@ import { LoginService } from './login.service';
         AppComponent,
         NavMenuComponent,
         EntriesComponent,
+        LoginComponent,
     ],
     providers: [LoginService],
     imports: [
         UniversalModule, // Must be first import. This automatically imports BrowserModule, HttpModule, and JsonpModule too.
         RouterModule.forRoot([
-            { path: '', redirectTo: 'entries', pathMatch: 'full' },
+            { path: '', redirectTo: 'login', pathMatch: 'full' },
             { path: 'entries', component: EntriesComponent },
+            { path: 'login', component: LoginComponent },
             { path: '**', redirectTo: 'entries' }
         ]),
         FormsModule

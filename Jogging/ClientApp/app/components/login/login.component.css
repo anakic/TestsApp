@@ -1,0 +1,7 @@
+﻿.login-form {
+    position: fixed;
+    width: 500px;
+    left: 50%;
+    margin-left: -250px;
+    margin-top: 150px
+}
