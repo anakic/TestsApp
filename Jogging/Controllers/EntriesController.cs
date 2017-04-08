@@ -22,7 +22,7 @@ namespace jogging.Controllers
         }
 
         [HttpPut()]
-        public IActionResult Put([FromBody]EntryUpdateDTO updatedEntryDTO)
+        public IActionResult Update([FromBody]EntryUpdateDTO updatedEntryDTO)
         {
             var entry = _context.Entries.Find(updatedEntryDTO.Id);
             var currentUser = _userService.GetCurrentUser();
@@ -46,7 +46,7 @@ namespace jogging.Controllers
         }
 
         [HttpPost()]
-        public IActionResult Post([FromBody]EntryNewDTO newEntryDTO)
+        public IActionResult Create([FromBody]EntryNewDTO newEntryDTO)
         {
             if (_context.Users.Find(newEntryDTO.UserId) == null)
             {

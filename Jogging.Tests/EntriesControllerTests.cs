@@ -232,7 +232,7 @@ namespace Jogging.Tests
             _context.Add(entry = new Entry() { Id = 123, Date = dtInitial, UserId = _regularUser1.Id, DistanceInMeters = 55, TimeInSeconds = 99 });
             _context.SaveChanges();
 
-            _controller.Put(new EntryUpdateDTO()
+            _controller.Update(new EntryUpdateDTO()
             {
                 Id = entry.Id,
                 DistanceInMeters = entry.DistanceInMeters + 101,
@@ -259,7 +259,7 @@ namespace Jogging.Tests
             _context.SaveChanges();
 
             _userService.SetUser(_regularUser1);
-            var res = _controller.Put(new EntryUpdateDTO()
+            var res = _controller.Update(new EntryUpdateDTO()
             {
                 Id = entry.Id + 1,//invalid id
                 DistanceInMeters = entry.DistanceInMeters + 101,
@@ -282,7 +282,7 @@ namespace Jogging.Tests
             _context.SaveChanges();
 
             _userService.SetUser(_regularUser1);
-            var res = _controller.Put(new EntryUpdateDTO()
+            var res = _controller.Update(new EntryUpdateDTO()
             {
                 Id = entry.Id,
                 DistanceInMeters = entry.DistanceInMeters + 101,
@@ -305,7 +305,7 @@ namespace Jogging.Tests
             _context.SaveChanges();
 
             _userService.SetUser(_regularUser2);
-            var res = _controller.Put(new EntryUpdateDTO()
+            var res = _controller.Update(new EntryUpdateDTO()
             {
                 Id = entry.Id,
                 DistanceInMeters = entry.DistanceInMeters + 101,
@@ -329,7 +329,7 @@ namespace Jogging.Tests
 
             _userService.SetUser(_adminUser);
             EntryUpdateDTO updateDTO;
-            var res = _controller.Put(updateDTO = new EntryUpdateDTO()
+            var res = _controller.Update(updateDTO = new EntryUpdateDTO()
             {
                 Id = entry.Id,
                 DistanceInMeters = entry.DistanceInMeters + 101,
@@ -352,7 +352,7 @@ namespace Jogging.Tests
         {
             EntryNewDTO entryNew;
             _userService.SetUser(_regularUser1);
-            _controller.Post(entryNew = new EntryNewDTO()
+            _controller.Create(entryNew = new EntryNewDTO()
             {
                 DistanceInMeters = 101,
                 TimeInSeconds = 102,
@@ -371,7 +371,7 @@ namespace Jogging.Tests
         {
             EntryNewDTO entryNew;
             _userService.SetUser(_regularUser1);
-            var res = _controller.Post(entryNew = new EntryNewDTO()
+            var res = _controller.Create(entryNew = new EntryNewDTO()
             {
                 DistanceInMeters = 101,
                 TimeInSeconds = 102,
@@ -387,7 +387,7 @@ namespace Jogging.Tests
         {
             _userService.SetUser(_regularUser1);
             EntryNewDTO entryNew;
-            var res = _controller.Post(entryNew = new EntryNewDTO()
+            var res = _controller.Create(entryNew = new EntryNewDTO()
             {
                 DistanceInMeters = 101,
                 TimeInSeconds = 102,
@@ -403,7 +403,7 @@ namespace Jogging.Tests
         {
             _userService.SetUser(_adminUser);
             EntryNewDTO entryNew;
-            var res = _controller.Post(entryNew = new EntryNewDTO()
+            var res = _controller.Create(entryNew = new EntryNewDTO()
             {
                 DistanceInMeters = 101,
                 TimeInSeconds = 102,
