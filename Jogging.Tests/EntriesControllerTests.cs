@@ -346,5 +346,72 @@ namespace Jogging.Tests
             Assert.AreEqual(updateDTO.TimeInSeconds, res2.Single().TimeInSeconds);
             Assert.AreEqual(updateDTO.Date, res2.Single().Date);
         }
+
+        [TestMethod]
+        public void NewEntryWithValidData()
+        {
+            EntryNewDTO entryNew;
+            _userService.SetUser(_regularUser1);
+            _controller.Post(entryNew = new EntryNewDTO()
+            {
+                DistanceInMeters = 101,
+                TimeInSeconds = 102,
+                UserId = _regularUser1.Id,
+                Date = new DateTime(2020, 1, 1)
+            });
+
+            var res = ((_controller.Get(entryNew.Date, entryNew.Date, _regularUser1.Id) as OkObjectResult).Value as IEnumerable<EntryDTO>).ToArray();
+            Assert.AreEqual(entryNew.DistanceInMeters, res.Single().DistanceInMeters);
+            Assert.AreEqual(entryNew.TimeInSeconds, res.Single().TimeInSeconds);
+            Assert.AreEqual(entryNew.Date, res.Single().Date);
+        }
+
+        [TestMethod]
+        public void NewEntryWithBadUserIdData()
+        {
+            EntryNewDTO entryNew;
+            _userService.SetUser(_regularUser1);
+            var res = _controller.Post(entryNew = new EntryNewDTO()
+            {
+                DistanceInMeters = 101,
+                TimeInSeconds = 102,
+                UserId = 999999,//bad id
+                Date = new DateTime(2020, 1, 1)
+            });
+
+            Assert.AreEqual("Invalid userId.", (res as BadRequestObjectResult).Value);
+        }
+
+        [TestMethod]
+        public void UserCantCreateEntryForAnotherUser()
+        {
+            _userService.SetUser(_regularUser1);
+            EntryNewDTO entryNew;
+            var res = _controller.Post(entryNew = new EntryNewDTO()
+            {
+                DistanceInMeters = 101,
+                TimeInSeconds = 102,
+                UserId = _regularUser2.Id,//other user
+                Date = new DateTime(2020, 1, 1)
+            });
+
+            Assert.AreEqual("Access denied.", (res as BadRequestObjectResult).Value);
+        }
+
+        [TestMethod]
+        public void AdminCanCreateEntryForAnotherUser()
+        {
+            _userService.SetUser(_adminUser);
+            EntryNewDTO entryNew;
+            var res = _controller.Post(entryNew = new EntryNewDTO()
+            {
+                DistanceInMeters = 101,
+                TimeInSeconds = 102,
+                UserId = _regularUser2.Id,//other user
+                Date = new DateTime(2020, 1, 1)
+            });
+
+            Assert.IsInstanceOfType(res, typeof(OkResult));
+        }
     }
 }

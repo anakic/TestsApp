@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs';
+import { LoginService } from '../../login.service';
 
 @Component({
     selector: 'fetchdata',
@@ -16,6 +17,10 @@ export class EntriesComponent {
     //filter params
     public from: Date;
     public to: Date;
+
+    public newEntry() {
+        this.editingEntry = { id: null, date: new Date(), timeInSeconds: 0, distanceInMeters: 0, userId: this.loginService.user.id, averageSpeed: null };
+    }
 
     public edit(entry: Entry) {
         //copy object
@@ -75,7 +80,7 @@ export class EntriesComponent {
         return new Date(str);
     }
 
-    constructor(private http: Http) {
+    constructor(private http: Http, private loginService: LoginService) {
         this.from = new Date();
         this.to = new Date();
         this.from.setDate(new Date().getDate() - 28);

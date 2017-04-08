@@ -45,6 +45,32 @@ namespace jogging.Controllers
             }
         }
 
+        [HttpPost()]
+        public IActionResult Post([FromBody]EntryNewDTO newEntryDTO)
+        {
+            if (_context.Users.Find(newEntryDTO.UserId) == null)
+            {
+                return BadRequest("Invalid userId.");
+            }
+            if (_userService.GetCurrentUser().CanAccessEntriesForUser(newEntryDTO.UserId) == false)
+            {
+                return BadRequest("Access denied.");
+            }
+            else
+            {
+                var entry = new Entry()
+                {
+                    Date = newEntryDTO.Date,
+                    DistanceInMeters = newEntryDTO.DistanceInMeters,
+                    TimeInSeconds = newEntryDTO.TimeInSeconds,
+                    UserId = newEntryDTO.UserId
+                };
+                _context.Entries.Add(entry);
+                _context.SaveChanges();
+                return Ok();
+            }
+        }
+
         [HttpGet]
         public IActionResult Get(DateTime from, DateTime to, int? userId)
         {
@@ -109,6 +135,7 @@ namespace jogging.Controllers
         }
     }
 
+    #region viewmodels
     public class WeeklySummaryDTO
     {
         public int Year { get; set; }
@@ -149,4 +176,5 @@ namespace jogging.Controllers
 
         public EntryDTO() { }
     }
+    #endregion
 }

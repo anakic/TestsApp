@@ -18,7 +18,7 @@ namespace jogging
 
         public async Task Invoke(HttpContext context)
         {
-            var principal = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.Name, "antonio@jogging.com") }, "Basic"));
+            var principal = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.Name, "test@user.com") }, "Basic"));
             var isAuthenticated = principal.Identity.IsAuthenticated; // true
             context.User = principal;
 
