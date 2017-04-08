@@ -49,11 +49,12 @@ namespace jogging.Controllers
         }
 
         [HttpGet("[action]")]
-        public IEnumerable<WeeklySummaryDTO> WeeklySummary(DateTime from, DateTime to)
+        public IActionResult WeeklySummary(DateTime from, DateTime to)
         {
-            return _context.Entries.Where(e => e.Date >= from && e.Date <= to)
+            var summaries = _context.Entries.Where(e => e.Date >= from && e.Date <= to)
                 .Where(e => e.User.Email.ToUpper() == _userService.GetCurrentUserIdentity().ToUpper())
-                .GroupBy(e => new { Year = e.Date.Year, Week = e.Date.Day / 7 })
+                .GroupBy(e => new { Year = e.Date.Year, Week = CalculateWeekOfYear(e.Date) })
+                .Where(g=>g.Count() > 0)
                 .Select(g => new WeeklySummaryDTO
                 {
                     Year = g.Key.Year,
@@ -62,6 +63,15 @@ namespace jogging.Controllers
                     TotalTimeInSecoonds = g.Sum(e => e.TimeInSeconds),
                     AverageSpeed = g.Sum(e => e.DistanceInMeters) / (float)g.Sum(e => e.TimeInSeconds)
                 });
+
+            return Ok(summaries);
+        }
+
+        private static int CalculateWeekOfYear(DateTime dt)
+        {
+            //.NET core doesn't have a Calendar.WeekOfYear() method
+            //so using an (not so great) approximation here
+            return 1 + dt.Day / 7;
         }
     }
 
