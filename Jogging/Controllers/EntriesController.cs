@@ -22,10 +22,11 @@ namespace jogging.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get(DateTime from, DateTime to, int userId)
+        public IActionResult Get(DateTime from, DateTime to, int? userId)
         {
             var currentUser = _context.Users.FindByEmail(_userService.GetCurrentUserIdentity());
-            if (currentUser.Role != UserRole.Admin && userId != currentUser.Id)
+            int targetUserId = userId ?? currentUser.Id;
+            if (currentUser.Role != UserRole.Admin && targetUserId != currentUser.Id)
             {
                 ModelState.AddModelError(nameof(userId), "Access denied");
                 return BadRequest(ModelState);
@@ -33,7 +34,7 @@ namespace jogging.Controllers
 
             var entries = _context.Entries
                 .Where(e => e.Date >= from && e.Date <= to)
-                .Where(e => e.UserId == userId)
+                .Where(e => e.UserId == targetUserId)
                 .OrderByDescending(e=>e.Date)
                 .Select(e => new EntryDTO()
                 {

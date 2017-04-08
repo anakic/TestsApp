@@ -96,6 +96,31 @@ namespace Jogging.Tests
         }
 
         [TestMethod]
+        public void NullUserAssumesCurrentUser()
+        {
+            DateTime dt1 = new DateTime(2020, 1, 16);
+            DateTime dt2 = new DateTime(2020, 1, 16);
+
+            //add entry for user1
+            _context.Add(new Entry() { Id = 1, Date = dt1, UserId = _regularUser1.Id });
+            //add two entries for user 2
+            _context.Add(new Entry() { Id = 2, Date = dt1, UserId = _regularUser2.Id });
+            _context.Add(new Entry() { Id = 3, Date = dt2, UserId = _regularUser2.Id });
+            _context.SaveChanges();
+
+            //verify only user1 entries retrieved when user1 active
+            _userService.SetUser(_regularUser1.Email);
+            var res = ((_controller.Get(dt1, dt2, null) as OkObjectResult).Value as IEnumerable<EntryDTO>).ToArray();
+            Assert.AreEqual(1, res.Single().Id);
+
+            //switch to user2 and verify only user2 entries returned
+            _userService.SetUser(_regularUser2.Email);
+            res = ((_controller.Get(dt1, dt2, null) as OkObjectResult).Value as IEnumerable<EntryDTO>).ToArray();
+            Assert.AreEqual(1, res.Count(e => e.Id == 2));
+            Assert.AreEqual(1, res.Count(e => e.Id == 3));
+        }
+
+        [TestMethod]
         public void AdminCanAccessAnotherUsersEntries()
         {
             DateTime dt1 = new DateTime(2020, 1, 16);
