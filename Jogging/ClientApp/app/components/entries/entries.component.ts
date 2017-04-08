@@ -15,6 +15,22 @@ export class EntriesComponent {
     public from: Date;
     public to: Date;
 
+
+    public delete(entry: Entry) {
+        if (confirm('Are you sure?')) {
+            this.http.delete(`/api/entries/${entry.id}`).subscribe(result => {
+                if (result.ok) {
+                    //Removing the item from the array manually to reduce traffic and keep scroll position.
+                    //The alternative would be to just call filter().
+                    this.entries = this.entries.filter(e => e.id != entry.id);
+                }
+                else {
+                    this.message = `Oops, something went wrong... Status: ${result.status}, text: ${result.statusText}`;
+                }
+            }, err => this.message = `Oops, something went wrong... ` + err);
+        }
+    }
+
     public filter() {
         this.entries = null;
         this.fetchStatus = EntryFetchStatus.Working;
@@ -24,7 +40,7 @@ export class EntriesComponent {
         }, () => {
             this.message = "Error fetching data";
             this.fetchStatus = EntryFetchStatus.Completed;
-            });
+        });
     }
 
     constructor(private http: Http) {

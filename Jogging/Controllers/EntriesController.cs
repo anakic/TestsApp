@@ -49,6 +49,14 @@ namespace jogging.Controllers
             return Ok(entries);
         }
 
+        [HttpDelete("{id}")]
+        public StatusCodeResult Delete(int id)
+        {
+            _context.Entries.Remove(_context.Entries.Find(id));
+            _context.SaveChanges();
+            return Ok();
+        }
+
         [HttpGet("[action]")]
         public IActionResult WeeklySummary(DateTime from, DateTime to)
         {

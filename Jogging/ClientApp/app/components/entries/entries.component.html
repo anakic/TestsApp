@@ -17,6 +17,7 @@
             <th>Distance</th>
             <th>Time</th>
             <th>Speed</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -25,6 +26,9 @@
             <td>{{ entry.distanceInMeters }}</td>
             <td>{{ entry.timeInSeconds }}</td>
             <td>{{ entry.averageSpeed }}</td>
+            <td>
+                <button (click)="delete(entry)">Delete</button>
+            </td>
         </tr>
     </tbody>
 </table>

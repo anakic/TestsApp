@@ -96,6 +96,21 @@ namespace Jogging.Tests
         }
 
         [TestMethod]
+        public void DeleteEntryWorks()
+        {
+            DateTime dt1 = new DateTime(2020, 1, 16);
+
+            _userService.SetUser(_regularUser1.Email);
+            _context.Add(new Entry() { Id = 1, Date = dt1, UserId = _regularUser1.Id });
+            _context.Add(new Entry() { Id = 2, Date = dt1, UserId = _regularUser1.Id });
+            _context.SaveChanges();
+
+            _controller.Delete(1);
+            var res = ((_controller.Get(dt1, dt1, null) as OkObjectResult).Value as IEnumerable<EntryDTO>).ToArray();
+            Assert.AreEqual(2, res.Single().Id);
+        }
+
+        [TestMethod]
         public void NullUserAssumesCurrentUser()
         {
             DateTime dt1 = new DateTime(2020, 1, 16);
