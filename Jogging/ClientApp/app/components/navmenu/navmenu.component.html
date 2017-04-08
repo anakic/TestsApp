@@ -22,7 +22,7 @@
                         <span class='glyphicon glyphicon-calendar'></span> Weekly report
                     </a>
                 </li>
-                <li [routerLinkActive]="['link-active']" *ngIf="loginService.user.canCrudUsers">
+                <li [routerLinkActive]="['link-active']" *ngIf="loginService.user && loginService.user.canCrudUsers">
                     <a [routerLink]="['/administration']">
                         <span class='glyphicon glyphicon-adjust'></span> Administration
                     </a>
