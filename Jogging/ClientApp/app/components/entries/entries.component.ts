@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { Http } from '@angular/http';
+import { Http, Response } from '@angular/http';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'fetchdata',
@@ -8,6 +9,7 @@ import { Http } from '@angular/http';
 export class EntriesComponent {
     //view data
     public entries: Entry[];
+    public editingEntry: Entry;
     public message: string;
     public fetchStatus: EntryFetchStatus;
 
@@ -15,6 +17,32 @@ export class EntriesComponent {
     public from: Date;
     public to: Date;
 
+    public edit(entry: Entry) {
+        //copy object
+        this.editingEntry = { id: entry.id, date: entry.date, distanceInMeters: entry.distanceInMeters, timeInSeconds: entry.timeInSeconds, averageSpeed: entry.averageSpeed, userId: entry.userId };
+    }
+
+    public cancelEdit() {
+        this.editingEntry = null;
+    }
+
+    public saveChanges() {
+
+        let observableResult: Observable<Response>;
+        if (this.editingEntry.id != null) {
+            observableResult = this.http.put(`/api/Entries`, this.editingEntry);
+        }
+        else {
+            observableResult = this.http.post(`/api/Entries`, this.editingEntry);
+        }
+
+        observableResult.subscribe(result => {
+            this.editingEntry = null;
+            this.filter();
+        }, error => {
+            this.message = `Oops, something went wrong. ${error._body}`;
+        });
+    }
 
     public delete(entry: Entry) {
         if (confirm('Are you sure?')) {
@@ -43,6 +71,10 @@ export class EntriesComponent {
         });
     }
 
+    public parseDate(str: string): Date {
+        return new Date(str);
+    }
+
     constructor(private http: Http) {
         this.from = new Date();
         this.to = new Date();
@@ -63,4 +95,5 @@ interface Entry {
     distanceInMeters: number,
     timeInSeconds: number,
     averageSpeed: number,
+    userId: number
 }

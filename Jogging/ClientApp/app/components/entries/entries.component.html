@@ -1,34 +1,68 @@
-<h1>Jogging entries</h1>
-
-<div>
-    <input [value]="from | date:'yyyy-MM-dd'" (input)="from=parseDate($event.target.value)" type="date" />
-    <input [value]="to | date:'yyyy-MM-dd'" (input)="to=parseDate($event.target.value)" type="date" />
-    <button (click)="filter()">Filter</button>
-</div>
-
-<em *ngIf="fetchStatus == 1">Working...</em>
-
 <em *ngIf="message">{{message}}</em>
 
-<table class='table' *ngIf="fetchStatus == 2">
-    <thead>
-        <tr>
-            <th>Date</th>
-            <th>Distance</th>
-            <th>Time</th>
-            <th>Speed</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let entry of entries">
-            <td>{{ entry.date }}</td>
-            <td>{{ entry.distanceInMeters }}</td>
-            <td>{{ entry.timeInSeconds }}</td>
-            <td>{{ entry.averageSpeed }}</td>
-            <td>
-                <button (click)="delete(entry)">Delete</button>
-            </td>
-        </tr>
-    </tbody>
-</table>
+<div *ngIf="editingEntry" class="panel panel-primary editBox">
+    <div class="panel-heading">
+        Enter run data
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-2">Date</div>
+            <div class="col-md-10"><input class="form-control" [value]="editingEntry.date | date:'yyyy-MM-dd'" (input)="editingEntry.date=parseDate($event.target.value)" type="date" /></div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">Time</div>
+            <div class="col-md-10"><input class="form-control" [(ngModel)]="editingEntry.timeInSeconds" /></div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">Distance</div>
+            <div class="col-md-10"><input class="form-control" [(ngModel)]="editingEntry.distanceInMeters" /></div>
+        </div>
+        <div class="row text-danger" *ngIf="statusMessage">
+            <div class="col-md-12">
+                {{ statusMessage }}
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-footer">
+        <button (click)="saveChanges()">Save</button>
+        <button (click)="cancelEdit()">Cancel</button>
+    </div>
+</div>
+
+<div *ngIf="!editingEntry">
+    <h1>Jogging entries</h1>
+
+    <div>
+        <input [value]="from | date:'yyyy-MM-dd'" (input)="from=parseDate($event.target.value)" type="date" />
+        <input [value]="to | date:'yyyy-MM-dd'" (input)="to=parseDate($event.target.value)" type="date" />
+        <button (click)="filter()">Filter</button>
+        <button (click)="newEntry()">New entry</button>
+    </div>
+
+    <em *ngIf="fetchStatus == 1">Working...</em>
+    
+    <table class='table' *ngIf="fetchStatus == 2">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Distance</th>
+                <th>Time</th>
+                <th>Speed</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let entry of entries">
+                <td>{{ entry.date }}</td>
+                <td>{{ entry.distanceInMeters }}</td>
+                <td>{{ entry.timeInSeconds }}</td>
+                <td>{{ entry.averageSpeed }}</td>
+                <td>
+                    <button (click)="edit(entry)">Edit</button>
+                    <button (click)="delete(entry)">Delete</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
