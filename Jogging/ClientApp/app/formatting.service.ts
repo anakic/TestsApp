@@ -2,18 +2,21 @@
 
 @Injectable()
 export class FormattingService {
-        
+
     //note: i18n (would likely need to be user configurable)
 
     public formatDistanceForDisplay(distanceInMeters: number): string {
         return `${(distanceInMeters / 1000).toFixed(2)}km`;
     }
     public formatDistanceForEditing(distanceInMeters: number): string {
-        return `${(distanceInMeters/1000).toFixed(2)}`;
+        return `${(distanceInMeters / 1000).toFixed(4)}`;
     }
 
     public parseDistanceFromEditing(input: string) {
-        return (parseFloat(input) * 1000);
+        if (/^\d+(\.\d+)?$/.test(input) == false)
+            return null;
+        else
+            return (parseFloat(input) * 1000);
     }
 
     public formatDateForDisplay(date: Date): string {
@@ -22,10 +25,14 @@ export class FormattingService {
     }
     public formatDateForEditing(date: Date): string {
         date = new Date(date);//coerce type
-        return `${date.getFullYear()}-${("0" + (date.getMonth()+1)).slice(-2)}-${("0" + date.getDate()).slice(-2)}`;
+        return `${date.getFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${("0" + date.getDate()).slice(-2)}`;
     }
     public parseDateFromEditing(input: string) {
-        return new Date(input);
+        try {
+            return new Date(input);
+        } catch (e) {
+            return null;
+        }
     }
 
     public formatTimeForDisplay(timeInSeconds: number): string {
@@ -39,15 +46,21 @@ export class FormattingService {
         return this.formatTimeForDisplay(timeInSeconds);
     }
     public parseTimeFromEditing(input: string) {
-        var segments = input.split(":");
-        if (segments.length != 3)
-            throw new Error("Invalid time string!");
+        if (/^\d{1,2}:\d{1,2}:\d{1,2}$/.test(input) == false)
+            return null;
+        else {
+            var segments = input.split(":");
+            if (segments.length != 3)
+                throw new Error("Invalid time string!");
 
-        var hours = parseInt(segments[0]);
-        var minutes = parseInt(segments[1]);
-        var seconds = parseInt(segments[2]);
+            var hours = parseInt(segments[0]);
+            var minutes = parseInt(segments[1]);
+            var seconds = parseInt(segments[2]);
 
-        return (hours * 60 + minutes) * 60 + seconds;
+            var seconds = (hours * 60 + minutes) * 60 + seconds;
+
+            return seconds;
+        }
     }
 
     public formatSpeedForDisplay(speedInMetersPerSecond: number): string {

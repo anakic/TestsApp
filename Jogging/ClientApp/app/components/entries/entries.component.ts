@@ -35,20 +35,26 @@ export class EntriesComponent {
 
     public saveChanges() {
 
-        let observableResult: Observable<Response>;
-        if (this.editingEntry.id != null) {
-            observableResult = this.http.put(`/api/Entries`, this.editingEntry);
-        }
+        if (this.editingEntry.timeInSeconds == null)
+            this.dialogService.alert('Invalid time');
+        else if (this.editingEntry.distanceInMeters == null)
+            this.dialogService.alert('Invalid distance');
         else {
-            observableResult = this.http.post(`/api/Entries`, this.editingEntry);
-        }
+            let observableResult: Observable<Response>;
+            if (this.editingEntry.id != null) {
+                observableResult = this.http.put(`/api/Entries/${this.editingEntry.id}`, this.editingEntry);
+            }
+            else {
+                observableResult = this.http.post(`/api/Entries`, this.editingEntry);
+            }
 
-        observableResult.subscribe(result => {
-            this.editingEntry = null;
-            this.filter();
-        }, error => {
-            this.message = `Oops, something went wrong. ${error._body}`;
-        });
+            observableResult.subscribe(result => {
+                this.editingEntry = null;
+                this.filter();
+            }, error => {
+                this.message = `Oops, something went wrong. ${error._body}`;
+            });
+        }
     }
 
     public delete(entry: Entry) {
