@@ -1,22 +1,25 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs';
 import { LoginService } from '../../login.service';
 import { FormattingService } from '../../formatting.service';
 import { DialogService } from '../../dialog.service';
+import { UserData, UserRole, UserService } from '../../users.service';
 
 @Component({
     styleUrls: ['./entries.component.css'],
     templateUrl: './entries.component.html'
 })
-export class EntriesComponent {
+export class EntriesComponent extends OnInit {
     //view data
+    public users: UserData[];
     public entries: Entry[];
     public editingEntry: Entry;
     public message: string;
     public fetchStatus: EntryFetchStatus;
 
     //filter params
+    public userId: number;
     public from: Date;
     public to: Date;
 
@@ -75,7 +78,7 @@ export class EntriesComponent {
     public filter() {
         this.entries = null;
         this.fetchStatus = EntryFetchStatus.Working;
-        this.http.get(`/api/entries?from=${this.from.toISOString().substring(0, 11)}00:00:00&to=${this.to.toISOString().substring(0, 11)}23:59:59`).subscribe(result => {
+        this.http.get(`/api/entries?from=${this.from.toISOString().substring(0, 11)}00:00:00&to=${this.to.toISOString().substring(0, 11)}23:59:59` + (this.userId ? `&userId=${this.userId}` : '')).subscribe(result => {
             this.entries = result.json() as Entry[];
             this.fetchStatus = EntryFetchStatus.Completed;
         }, () => {
@@ -88,9 +91,18 @@ export class EntriesComponent {
         return new Date(str);
     }
 
-    constructor(private http: Http, private loginService: LoginService, private formattingService: FormattingService, private dialogService: DialogService) {
+    public ngOnInit() {
+
+        if (this.loginService.user.canCrudAllEntries) {
+            this.userService.search('').subscribe(users => this.users = users);
+        }
+    }
+
+    constructor(private http: Http, public loginService: LoginService, private formattingService: FormattingService, private dialogService: DialogService, private userService: UserService) {
+        super();
         this.from = new Date();
         this.to = new Date();
+        this.userId = this.loginService.user.id;
         this.from.setDate(new Date().getDate() - 28);
         this.fetchStatus = EntryFetchStatus.Initial;
     }

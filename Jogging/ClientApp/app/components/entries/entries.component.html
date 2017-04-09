@@ -37,6 +37,11 @@
     <div>
         <input [value]="formattingService.formatDateForEditing(from)" (input)="from=formattingService.parseDateFromEditing($event.target.value)" type="date" />
         <input [value]="formattingService.formatDateForEditing(to)" (input)="to=formattingService.parseDateFromEditing($event.target.value)" type="date" />
+
+        <select *ngIf="loginService.user.canCrudAllEntries" [(ngModel)]="userId">
+            <option *ngFor="let user of users" [attr.value]="user.id" [attr.selected]="userId == user.id ? true : null">{{ user.email }}</option>
+        </select>
+
         <button (click)="filter()">Filter</button>
         <button (click)="newEntry()">New entry</button>
     </div>

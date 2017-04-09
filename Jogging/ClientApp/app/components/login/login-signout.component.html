@@ -1,6 +1,6 @@
 ﻿<div class="login-signout">
     <div *ngIf="loginService.user">
-        Hello {{ loginService.user.firstName + ' ' + loginService.user.lastName}}
+        Hello, {{ loginService.user.firstName + ' ' + loginService.user.lastName}}
         <button (click)="signout()">Sign out</button>
     </div>
 </div>

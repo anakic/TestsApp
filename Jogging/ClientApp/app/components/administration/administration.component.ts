@@ -1,6 +1,8 @@
 ﻿import { Component } from '@angular/core';
 import { Http } from '@angular/http';
 import { LoginData } from '../../login.service';
+import { DialogService } from '../../dialog.service';
+import { UserData, UserRole, UserService } from '../../users.service';
 
 @Component({
     templateUrl: './administration.component.html'
@@ -15,7 +17,7 @@ export class AdministrationComponent {
     public editingUser: UserData;
     public users: UserData[];
 
-    constructor(private http: Http) {
+    constructor(private http: Http, private userService: UserService, private dialogService: DialogService) {
         this.isFetching = false;
         this.searchTerm = "";
     }
@@ -27,13 +29,8 @@ export class AdministrationComponent {
     public filter() {
         this.users = null;
         this.message = null;
-        this.http.get(`/api/users?searchTerm=${this.searchTerm}`).subscribe(res => {
-            if (res.ok)
-                this.users = res.json() as UserData[];
-            else
-                this.message = 'Error fetching users: ' + res;
-
-            this.isFetching = false;
+        this.userService.search(this.searchTerm).subscribe(res => {
+            this.users = res;
         }, res => {
             this.isFetching = false;
             this.message = res._body;
@@ -41,15 +38,17 @@ export class AdministrationComponent {
     }
 
     public deleteUser(user: UserData) {
-        this.message = null;
-        this.http.delete(`/api/users`, user).subscribe(res => {
-            if (res.ok)
-                this.filter();
-            else
-                this.message = 'Oops, error deleting users. Message: ' + res;
-        }, res => {
-            this.message = 'Oops, error deleting users. Message: ' + res._body;
-        });
+        if (this.dialogService.confirm('Are you sure?')) {
+            this.message = null;
+            this.userService.delete(user.id).subscribe(res => {
+                if (res)
+                    this.filter();
+                else
+                    this.message = 'Oops, error deleting user.';
+            }, res => {
+                this.message = res._body;
+            });
+        }
     }
 
     public saveChanges() {
@@ -60,17 +59,19 @@ export class AdministrationComponent {
         else {
             var observable;
             this.message = null;
-            if (this.editingUser.id == null)
-                observable = this.http.post(`/api/users`, this.editingUser);
-            else
-                observable = this.http.put(`/api/users/${this.editingUser.id}`, this.editingUser);
+            if (this.editingUser.id == null) {
+                observable = this.userService.create(this.editingUser);
+            } else {
+                observable = this.userService.update(this.editingUser);
+            }
 
             observable.subscribe(res => {
-                if (res.ok) {
+                if (res) {
                     this.filter();
                     this.editingUser = null;
-                } else
-                    this.message = res;
+                } else {
+                    this.message = 'Failed to save user data!';
+                }
             }, res => {
                 this.message = res._body;
             });
@@ -92,23 +93,8 @@ export class AdministrationComponent {
         this.editingUser = null;
     }
 
-    private validateEmail(email) : boolean {
+    private validateEmail(email): boolean {
         var expression = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return expression.test(email);
     }
-}
-
-enum UserRole {
-    User,
-    Manager,
-    Admin
-}
-
-interface UserData {
-    id: number,
-    email: string,
-    firstName: string,
-    lastName: string,
-    roleName: string,
-    role: number,
 }

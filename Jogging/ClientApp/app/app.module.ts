@@ -15,6 +15,7 @@ import { EntryEditGuard } from './components/entries/entry-edit.guard';
 import { UserEditGuard } from './components/administration/user-edit.guard';
 import { FormattingService } from './formatting.service';
 import { DialogService } from './dialog.service';
+import { UserService } from './users.service';
 
 
 
@@ -29,7 +30,7 @@ import { DialogService } from './dialog.service';
         AdministrationComponent,
         WeeklyReportComponent
     ],
-    providers: [LoginService, IsLoggedInGuard, IsUserAdminGuard, FormattingService, DialogService, EntryEditGuard, UserEditGuard],
+    providers: [LoginService, IsLoggedInGuard, IsUserAdminGuard, FormattingService, UserService, DialogService, EntryEditGuard, UserEditGuard],
     imports: [
         UniversalModule, // Must be first import. This automatically imports BrowserModule, HttpModule, and JsonpModule too.
         RouterModule.forRoot([
