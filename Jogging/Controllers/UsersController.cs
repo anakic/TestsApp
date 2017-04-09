@@ -42,10 +42,16 @@ namespace jogging.Controllers
 
         Regex emailRegex = new Regex(@"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z", RegexOptions.IgnoreCase);
 
-        [HttpPost()]
+        [HttpPost, AllowAnonymous]
         public IActionResult Post([FromBody]UserDto newUserDto)
-        {
-            if (newUserDto.Role > _loginService.GetCurrentUser().Role)
+        {   
+            var currentUser = _loginService.GetCurrentUser();
+
+            if (currentUser == null && newUserDto.Role != UserRole.User)
+            {
+                return BadRequest("One does not simply summon a king out of thin air, one must join the ranks as a peon first.");
+            }
+            else if (currentUser != null && newUserDto.Role > currentUser.Role)
             {
                 return BadRequest("Cannot bestow a user with a more magnificent role than current user.");
             }

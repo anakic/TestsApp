@@ -82,13 +82,13 @@ export class AdministrationComponent {
     public editUser(user: UserData) {
         this.message = null;
         this.updatePassword = false;
-        this.editingUser = { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role, roleName: '', newPassword: "" };
+        this.editingUser = { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role, roleName: '', password: "" };
     }
 
     public newUser() {
         this.message = null;
         this.updatePassword = false;
-        this.editingUser = { id: null, email: "", firstName: "", lastName: "", role: 0, roleName: "", newPassword: "" };
+        this.editingUser = { id: null, email: "", firstName: "", lastName: "", role: 0, roleName: "", password: "" };
     }
 
     public cancelEdit() {

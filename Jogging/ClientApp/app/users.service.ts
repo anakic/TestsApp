@@ -50,6 +50,6 @@ export interface UserData {
     firstName: string,
     lastName: string,
     roleName: string,
-    newPassword: string,
+    password: string,
     role: number,
 }

@@ -28,6 +28,10 @@ export class LoginComponent extends OnInit {
             });
     }
 
+    public createNew() {
+        this.router.navigate(['create-user']);
+    }
+
     public login() {
         this.isWorking = true;
         this.loginService.login(this.email, this.password).subscribe(res => {

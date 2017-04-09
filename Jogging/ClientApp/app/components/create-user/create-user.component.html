@@ -1,0 +1,32 @@
+﻿<div class="panel panel-primary create-user-form ">
+    <div class="panel-heading">
+        Enter your information
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-2">Email</div>
+            <div class="col-md-10"><input class="form-control" name="Email" [(ngModel)]="user.email" type="email" /></div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">First name</div>
+            <div class="col-md-10"><input class="form-control" name="FirstName" [(ngModel)]="user.firstName" /></div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">Last name</div>
+            <div class="col-md-10"><input class="form-control" name="LastName" [(ngModel)]="user.lastName" /></div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">Password</div>
+            <div class="col-md-10"><input class="form-control" [(ngModel)]="user.password" type="password" /></div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">Re-type password</div>
+            <div class="col-md-10"><input class="form-control" [(ngModel)]="user.password2" type="password" /></div>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <button (click)="create()">Save</button>
+        <button (click)="cancel()">Cancel</button>
+        <em class="text-danger">{{ message }}</em>
+    </div>
+</div>
