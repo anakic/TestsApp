@@ -12,6 +12,7 @@ import { LoginSignoutComponent } from './components/login/login-signout.componen
 import { WeeklyReportComponent } from './components/weekly-summary/weekly-summary.component';
 import { IsLoggedInGuard, IsUserAdminGuard } from './auth.guard';
 import { FormattingService } from './formatting.service';
+import { DialogService } from './dialog.service';
 
 @NgModule({
     bootstrap: [AppComponent],
@@ -24,7 +25,7 @@ import { FormattingService } from './formatting.service';
         AdministrationComponent,
         WeeklyReportComponent
     ],
-    providers: [LoginService, IsLoggedInGuard, IsUserAdminGuard, FormattingService],
+    providers: [LoginService, IsLoggedInGuard, IsUserAdminGuard, FormattingService, DialogService],
     imports: [
         UniversalModule, // Must be first import. This automatically imports BrowserModule, HttpModule, and JsonpModule too.
         RouterModule.forRoot([

@@ -3,6 +3,7 @@ import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs';
 import { LoginService } from '../../login.service';
 import { FormattingService } from '../../formatting.service';
+import { DialogService } from '../../dialog.service';
 
 @Component({
     styleUrls: ['./entries.component.css'],
@@ -51,7 +52,7 @@ export class EntriesComponent {
     }
 
     public delete(entry: Entry) {
-        if (confirm('Are you sure?')) {
+        if (this.dialogService.confirm('Are you sure?')) {
             this.http.delete(`/api/entries/${entry.id}`).subscribe(result => {
                 if (result.ok) {
                     //Removing the item from the array manually to reduce traffic and keep scroll position.
@@ -81,7 +82,7 @@ export class EntriesComponent {
         return new Date(str);
     }
 
-    constructor(private http: Http, private loginService: LoginService, private formattingService: FormattingService) {
+    constructor(private http: Http, private loginService: LoginService, private formattingService: FormattingService, private dialogService: DialogService) {
         this.from = new Date();
         this.to = new Date();
         this.from.setDate(new Date().getDate() - 28);
