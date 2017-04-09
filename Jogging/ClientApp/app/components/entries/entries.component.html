@@ -1,6 +1,8 @@
+<h1>Jogging entries</h1>
+
 <em *ngIf="message">{{message}}</em>
 
-<div *ngIf="editingEntry" class="panel panel-primary edit-box">
+<div *ngIf="editingEntry" class="panel panel-primary">
     <div class="panel-heading">
         Enter run data
     </div>
@@ -31,8 +33,7 @@
 </div>
 
 <div *ngIf="!editingEntry">
-    <h1>Jogging entries</h1>
-
+    
     <div>
         <input [value]="formattingService.formatDateForEditing(from)" (input)="from=formattingService.parseDateFromEditing($event.target.value)" type="date" />
         <input [value]="formattingService.formatDateForEditing(to)" (input)="to=formattingService.parseDateFromEditing($event.target.value)" type="date" />
