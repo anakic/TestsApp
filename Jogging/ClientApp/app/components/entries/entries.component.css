@@ -1,5 +1,6 @@
 ﻿.edit-box {
-    width: 500px;
-    margin-left: -250px;
-    margin-top: 150px
+    width: 80%;
+    left:10%;
+    margin-top: 150px;
+    position:relative
 }

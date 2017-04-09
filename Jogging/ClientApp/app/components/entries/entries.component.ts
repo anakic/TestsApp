@@ -5,7 +5,7 @@ import { LoginService } from '../../login.service';
 import { FormattingService } from '../../formatting.service';
 
 @Component({
-    styles: ['entries.component.css'],
+    styleUrls: ['./entries.component.css'],
     templateUrl: './entries.component.html'
 })
 export class EntriesComponent {
