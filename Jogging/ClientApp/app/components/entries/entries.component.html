@@ -7,15 +7,15 @@
     <div class="panel-body">
         <div class="row">
             <div class="col-md-2">Date</div>
-            <div class="col-md-10"><input class="form-control" [value]="editingEntry.date | date:'yyyy-MM-dd'" (input)="editingEntry.date=parseDate($event.target.value)" type="date" /></div>
+            <div class="col-md-10"><input class="form-control" [value]="formattingService.formatDateForEditing(editingEntry.date)" (blur)="editingEntry.date=formattingService.parseDateFromEditing($event.target.value)" type="date" /></div>
         </div>
         <div class="row">
             <div class="col-md-2">Time</div>
-            <div class="col-md-10"><input class="form-control" [(ngModel)]="editingEntry.timeInSeconds" /></div>
+            <div class="col-md-10"><input class="form-control" [value]="formattingService.formatTimeForEditing(editingEntry.timeInSeconds)" (blur)="editingEntry.timeInSeconds=formattingService.parseTimeFromEditing($event.target.value)" /></div>
         </div>
         <div class="row">
             <div class="col-md-2">Distance</div>
-            <div class="col-md-10"><input class="form-control" [(ngModel)]="editingEntry.distanceInMeters" /></div>
+            <div class="col-md-10"><input class="form-control" [value]="formattingService.formatDistanceForEditing(editingEntry.distanceInMeters)" (blur)="editingEntry.distanceInMeters=formattingService.parseDistanceFromEditing($event.target.value)" /></div>
         </div>
         <div class="row text-danger" *ngIf="statusMessage">
             <div class="col-md-12">
@@ -34,8 +34,8 @@
     <h1>Jogging entries</h1>
 
     <div>
-        <input [value]="from | date:'yyyy-MM-dd'" (input)="from=parseDate($event.target.value)" type="date" />
-        <input [value]="to | date:'yyyy-MM-dd'" (input)="to=parseDate($event.target.value)" type="date" />
+        <input [value]="formattingService.formatDateForEditing(from)" (input)="from=formattingService.parseDateFromEditing($event.target.value)" type="date" />
+        <input [value]="formattingService.formatDateForEditing(to)" (input)="to=formattingService.parseDateFromEditing($event.target.value)" type="date" />
         <button (click)="filter()">Filter</button>
         <button (click)="newEntry()">New entry</button>
     </div>
@@ -54,10 +54,10 @@
         </thead>
         <tbody>
             <tr *ngFor="let entry of entries">
-                <td>{{ entry.date }}</td>
-                <td>{{ entry.distanceInMeters }}</td>
-                <td>{{ entry.timeInSeconds }}</td>
-                <td>{{ entry.averageSpeed }}</td>
+                <td>{{ formattingService.formatDateForDisplay(entry.date) }}</td>
+                <td>{{ formattingService.formatDistanceForDisplay(entry.distanceInMeters) }}</td>
+                <td>{{ formattingService.formatTimeForDisplay(entry.timeInSeconds) }}</td>
+                <td>{{ formattingService.formatSpeedForDisplay(entry.averageSpeed) }}</td>
                 <td>
                     <button (click)="edit(entry)">Edit</button>
                     <button (click)="delete(entry)">Delete</button>

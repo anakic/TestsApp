@@ -2,8 +2,10 @@ import { Component } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs';
 import { LoginService } from '../../login.service';
+import { FormattingService } from '../../formatting.service';
 
 @Component({
+    styles: ['entries.component.css'],
     templateUrl: './entries.component.html'
 })
 export class EntriesComponent {
@@ -79,7 +81,7 @@ export class EntriesComponent {
         return new Date(str);
     }
 
-    constructor(private http: Http, private loginService: LoginService) {
+    constructor(private http: Http, private loginService: LoginService, private formattingService: FormattingService) {
         this.from = new Date();
         this.to = new Date();
         this.from.setDate(new Date().getDate() - 28);
