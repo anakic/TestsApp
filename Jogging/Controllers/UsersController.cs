@@ -7,6 +7,7 @@ using jogging.Model;
 using jogging.Services;
 using Microsoft.AspNetCore.Authorization;
 using System.Text.RegularExpressions;
+using Microsoft.EntityFrameworkCore;
 
 namespace jogging.Controllers
 {
@@ -33,12 +34,13 @@ namespace jogging.Controllers
                 .ToArray();
 
             var users = _context.Users
-                .Where(u => searchSegments.Length == 0 || searchSegments.All(seg => u.Email.ToUpper().Contains(seg) || u.FirstName.ToUpper().Contains(seg) || u.LastName.ToUpper().Contains(seg)));
+                .Where(u => searchSegments.Length == 0 || searchSegments.All(seg => u.Email.ToUpper().Contains(seg) || u.FirstName.ToUpper().Contains(seg) || u.LastName.ToUpper().Contains(seg)))
+                .OrderBy(u => u.Email);
 
             return Ok(users);
         }
 
-        Regex emailRegex = new Regex(@"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z");
+        Regex emailRegex = new Regex(@"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z", RegexOptions.IgnoreCase);
 
         [HttpPost()]
         public IActionResult Post([FromBody]UserDto newUserDto)
@@ -50,6 +52,10 @@ namespace jogging.Controllers
             else if (emailRegex.IsMatch(newUserDto.Email) == false)
             {
                 return BadRequest("Invalid email address.");
+            }
+            else if (_context.Users.FindByEmail(newUserDto.Email) != null)
+            {
+                return BadRequest("A user already exists with that email address.");
             }
             else
             {
@@ -94,12 +100,20 @@ namespace jogging.Controllers
             }
             else
             {
-                user.Email = userDTO.Email;
-                user.FirstName = userDTO.FirstName;
-                user.LastName = userDTO.LastName;
-                user.Role = userDTO.Role;
-                _context.SaveChanges();
-                return Ok();
+                var userWithSpecifiedEmail = _context.Users.FindByEmail(userDTO.Email);
+                if (userWithSpecifiedEmail != null && userWithSpecifiedEmail != user)
+                {
+                    return BadRequest("Anoter user with the specified email already exists.");
+                }
+                else
+                {
+                    user.Email = userDTO.Email;
+                    user.FirstName = userDTO.FirstName;
+                    user.LastName = userDTO.LastName;
+                    user.Role = userDTO.Role;
+                    _context.SaveChanges();
+                    return Ok();
+                }
             }
         }
 
@@ -114,6 +128,7 @@ namespace jogging.Controllers
             else
             {
                 _context.Remove(user);
+                _context.SaveChanges();
                 return Ok();
             }
         }

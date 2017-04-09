@@ -18,7 +18,7 @@ namespace jogging.Model
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>().HasIndex(u => u.Email);
+            modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique(true);
             modelBuilder.Entity<User>().HasMany(u=>u.Entries).WithOne(e=>e.User);
 
             modelBuilder.Entity<Entry>().HasOne(e => e.User).WithMany(u=>u.Entries);
