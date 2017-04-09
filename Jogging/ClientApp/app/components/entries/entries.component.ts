@@ -66,7 +66,7 @@ export class EntriesComponent {
     public filter() {
         this.entries = null;
         this.fetchStatus = EntryFetchStatus.Working;
-        this.http.get(`/api/entries?from=${this.from.toISOString()}&to=${this.to.toISOString()}`).subscribe(result => {
+        this.http.get(`/api/entries?from=${this.from.toISOString().substring(0, 11)}00:00:00&to=${this.to.toISOString().substring(0, 11)}23:59:59`).subscribe(result => {
             this.entries = result.json() as Entry[];
             this.fetchStatus = EntryFetchStatus.Completed;
         }, () => {
