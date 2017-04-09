@@ -12,6 +12,8 @@ export class AdministrationComponent {
     public message: string;
     public isFetching: boolean;
 
+    public updatePassword: boolean;
+
     public searchTerm: string;
 
     public editingUser: UserData;
@@ -55,14 +57,13 @@ export class AdministrationComponent {
 
         if (!this.validateEmail(this.editingUser.email)) {
             this.message = "Invalid email address";
-        }
-        else {
+        } else {
             var observable;
             this.message = null;
             if (this.editingUser.id == null) {
                 observable = this.userService.create(this.editingUser);
             } else {
-                observable = this.userService.update(this.editingUser);
+                observable = this.userService.update(this.editingUser, this.updatePassword);
             }
 
             observable.subscribe(res => {
@@ -80,12 +81,14 @@ export class AdministrationComponent {
 
     public editUser(user: UserData) {
         this.message = null;
-        this.editingUser = { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role, roleName: "" };
+        this.updatePassword = false;
+        this.editingUser = { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role, roleName: '', newPassword: "" };
     }
 
     public newUser() {
         this.message = null;
-        this.editingUser = { id: null, email: "", firstName: "", lastName: "", role: 0, roleName: "" };
+        this.updatePassword = false;
+        this.editingUser = { id: null, email: "", firstName: "", lastName: "", role: 0, roleName: "", newPassword: "" };
     }
 
     public cancelEdit() {

@@ -19,6 +19,14 @@
             <div class="col-md-2">Last name</div>
             <div class="col-md-10"><input class="form-control" name="LastName" [(ngModel)]="editingUser.lastName" /></div>
         </div>
+        <div class="row" *ngIf="editingUser.id">
+            <div class="col-md-2">Update password</div>
+            <div class="col-md-10"><input [(ngModel)]="updatePassword" type="checkbox" /></div>
+        </div>
+        <div class="row" *ngIf="updatePassword || !editingUser.id">
+            <div class="col-md-2">Password</div>
+            <div class="col-md-10"><input class="form-control" [(ngModel)]="editingUser.password" type="password"/></div>
+        </div>
         <div class="row">
             <div class="col-md-2">Role</div>
             <div class="col-md-10">

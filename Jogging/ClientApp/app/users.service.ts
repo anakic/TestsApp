@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 @Injectable()
 export class UserService {
 
-    public search(searchTerm: string) : Observable<UserData[]> {
+    public search(searchTerm: string): Observable<UserData[]> {
         return this.http.get(`/api/users?searchTerm=${searchTerm}`).map(res => {
             if (res.ok)
                 return res.json() as UserData[];
@@ -16,13 +16,13 @@ export class UserService {
 
     public delete(userId: number): Observable<boolean> {
         return this.http.delete(`/api/users/${userId}`)
-            .map(res =>{
+            .map(res => {
                 return res.ok;
             });
     }
 
-    public update(user: UserData): Observable<boolean> {
-        return this.http.put(`/api/users/${user.id}`, user)
+    public update(user: UserData, updatePassword: boolean): Observable<boolean> {
+        return this.http.put(`/api/users/${user.id}?${updatePassword ? '&updatePassword=true' : ''}`, user)
             .map(res => {
                 return res.ok;
             });
@@ -50,5 +50,6 @@ export interface UserData {
     firstName: string,
     lastName: string,
     roleName: string,
+    newPassword: string,
     role: number,
 }

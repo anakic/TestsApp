@@ -67,20 +67,18 @@ namespace jogging.Controllers
                     Role = newUserDto.Role,
                 };
 
-                //generate random password user
-                string password = Guid.NewGuid().ToString("n").Substring(12);
-                newUser.SetPassword(password);
+                newUser.SetPassword(newUserDto.Password);
                 _context.Add(newUser);
                 _context.SaveChanges();
 
-                _emailNotifier.SendUserdDetails(newUser.Email, newUser.FirstName, newUser.LastName, password, newUser.Role.ToString());
+                _emailNotifier.SendUserdDetails(newUser.Email, newUser.FirstName, newUser.LastName, newUserDto.Password, newUser.Role.ToString());
 
                 return Ok();
             }
         }
 
         [HttpPut("{userId}")]
-        public async Task<IActionResult> Put(int userId, [FromBody]UserDto userDTO)
+        public async Task<IActionResult> Put([FromBody]UserDto userDTO, int userId, bool updatePassword = false)
         {
             var currentUser = _loginService.GetCurrentUser();
             var user = await _context.Users.FindAsync(userId);
@@ -103,7 +101,7 @@ namespace jogging.Controllers
                 var userWithSpecifiedEmail = _context.Users.FindByEmail(userDTO.Email);
                 if (userWithSpecifiedEmail != null && userWithSpecifiedEmail != user)
                 {
-                    return BadRequest("Anoter user with the specified email already exists.");
+                    return BadRequest("Another user with the specified email already exists.");
                 }
                 else
                 {
@@ -111,6 +109,8 @@ namespace jogging.Controllers
                     user.FirstName = userDTO.FirstName;
                     user.LastName = userDTO.LastName;
                     user.Role = userDTO.Role;
+                    if (updatePassword)
+                        user.SetPassword(userDTO.Password);
                     _context.SaveChanges();
                     return Ok();
                 }
@@ -139,6 +139,7 @@ namespace jogging.Controllers
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string Password { get; set; }
         public UserRole Role { get; set; }
     }
 }
