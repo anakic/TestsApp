@@ -23,12 +23,15 @@ namespace jogging.Services
 
         public User GetCurrentUser()
         {
-            return _context.Users.FindByEmail(GetCurrentUserIdentity());
+            return _context.Users.Find(GetCurrentUserId());
         }
 
-        public string GetCurrentUserIdentity()
+        public int GetCurrentUserId()
         {
-            return _httpContextAccessor.HttpContext.User?.Identity?.Name;
+            return (_httpContextAccessor.HttpContext.User?.Identity as ClaimsIdentity).Claims
+                .Where(c => c.Type == ClaimTypes.NameIdentifier)
+                .Select(c => int.Parse(c.Value))
+                .SingleOrDefault();
         }
 
         public async Task<User> LoginAsync(string email, string password)
@@ -40,7 +43,11 @@ namespace jogging.Services
             }
             else
             {
-                var claims = new List<Claim> { new Claim(ClaimTypes.Name, myUser.Email), new Claim(ClaimTypes.Role, myUser.Role.ToString()) };
+                var claims = new List<Claim> {
+                    new Claim(ClaimTypes.Name, myUser.Email),
+                    new Claim(ClaimTypes.NameIdentifier, myUser.Id.ToString()),
+                    new Claim(ClaimTypes.Role, myUser.Role.ToString())
+                };
 
                 var props = new AuthenticationProperties
                 {
