@@ -28,8 +28,7 @@ export class IsUserAdminGuard implements CanActivate {
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
         if (!this.loginService.user || !this.loginService.user.canCrudUsers) {
-            this.loginService.redirectUrl = state.url;
-            this.router.navigateByUrl(this.loginService.loginUrl);
+            this.router.navigateByUrl('/entries');
         }
         return this.loginService.user && this.loginService.user.canCrudUsers;
     };
