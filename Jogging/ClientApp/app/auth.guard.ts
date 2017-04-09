@@ -13,6 +13,7 @@ export class IsLoggedInGuard implements CanActivate {
         var isLoggedIn = this.loginService.user != null;
 
         if (!isLoggedIn) {
+            this.loginService.redirectUrl = state.url;
             this.router.navigateByUrl(this.loginService.loginUrl);
         }
 
@@ -23,13 +24,13 @@ export class IsLoggedInGuard implements CanActivate {
 @Injectable()
 export class IsUserAdminGuard implements CanActivate {
 
-    constructor(private loginService: LoginService) { }
+    constructor(private loginService: LoginService, private router: Router) { }
 
-    canActivate(): boolean {
-
-        if (!this.loginService.user.canCrudUsers)
-            alert('User does not have permission to view this resource');
-
-        return  this.loginService.user.canCrudUsers;
+    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+        if (!this.loginService.user || !this.loginService.user.canCrudUsers) {
+            this.loginService.redirectUrl = state.url;
+            this.router.navigateByUrl(this.loginService.loginUrl);
+        }
+        return this.loginService.user && this.loginService.user.canCrudUsers;
     };
 }
