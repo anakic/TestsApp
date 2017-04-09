@@ -11,8 +11,12 @@ import { AdministrationComponent } from './components/administration/administrat
 import { LoginSignoutComponent } from './components/login/login-signout.component';
 import { WeeklyReportComponent } from './components/weekly-summary/weekly-summary.component';
 import { IsLoggedInGuard, IsUserAdminGuard } from './auth.guard';
+import { EntryEditGuard } from './components/entries/entry-edit.guard';
+import { UserEditGuard } from './components/administration/user-edit.guard';
 import { FormattingService } from './formatting.service';
 import { DialogService } from './dialog.service';
+
+
 
 @NgModule({
     bootstrap: [AppComponent],
@@ -25,15 +29,15 @@ import { DialogService } from './dialog.service';
         AdministrationComponent,
         WeeklyReportComponent
     ],
-    providers: [LoginService, IsLoggedInGuard, IsUserAdminGuard, FormattingService, DialogService],
+    providers: [LoginService, IsLoggedInGuard, IsUserAdminGuard, FormattingService, DialogService, EntryEditGuard, UserEditGuard],
     imports: [
         UniversalModule, // Must be first import. This automatically imports BrowserModule, HttpModule, and JsonpModule too.
         RouterModule.forRoot([
-            { path: '', redirectTo: 'entries', pathMatch: 'full' },
+            { path: '', redirectTo: 'login', pathMatch: 'full' },
             { path: 'login', component: LoginComponent },
-            { path: 'entries', component: EntriesComponent, canActivate: [IsLoggedInGuard] },
+            { path: 'entries', component: EntriesComponent, canActivate: [IsLoggedInGuard], canDeactivate: [EntryEditGuard] },
             { path: 'weekly-report', component: WeeklyReportComponent, canActivate: [IsLoggedInGuard] },
-            { path: 'administration', component: AdministrationComponent, canActivate: [IsUserAdminGuard] },
+            { path: 'administration', component: AdministrationComponent, canActivate: [IsUserAdminGuard], canDeactivate: [UserEditGuard] },
             { path: '**', redirectTo: 'entries' }
         ]),
         FormsModule
