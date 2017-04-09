@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Http } from '@angular/http';
+import { FormattingService } from '../../formatting.service';
 
 @Component({
     templateUrl: './weekly-summary.component.html'
@@ -24,11 +25,7 @@ export class WeeklyReportComponent {
         });
     }
 
-    public parseDate(str: string): Date {
-        return new Date(str);
-    }
-
-    constructor(private http: Http) {
+    constructor(private http: Http, private formattingService: FormattingService) {
         this.from = new Date();
         this.to = new Date();
         this.from.setDate(new Date().getDate() - 28);
