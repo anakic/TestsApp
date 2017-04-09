@@ -21,10 +21,10 @@ namespace jogging.Controllers
             _userService = userService;
         }
 
-        [HttpPut()]
-        public IActionResult Update([FromBody]EntryUpdateDTO updatedEntryDTO)
+        [HttpPut("{entryId}")]
+        public IActionResult Update(int entryId, [FromBody]EntryDataDTO updatedEntryDTO)
         {
-            var entry = _context.Entries.Find(updatedEntryDTO.Id);
+            var entry = _context.Entries.Find(entryId);
             var currentUser = _userService.GetCurrentUser();
             if (entry == null)
             {
@@ -46,7 +46,7 @@ namespace jogging.Controllers
         }
 
         [HttpPost()]
-        public IActionResult Create([FromBody]EntryNewDTO newEntryDTO)
+        public IActionResult Create([FromBody]EntryDataDTO newEntryDTO)
         {
             if (_context.Users.Find(newEntryDTO.UserId) == null)
             {
@@ -145,16 +145,7 @@ namespace jogging.Controllers
         public float AverageSpeed { get { return TotalDistanceInMeters / (float)TotalTimeInSeconds; } }
     }
 
-    public class EntryUpdateDTO
-    {
-        public int Id { get; set; }
-        public int UserId { get; set; }
-        public DateTime Date { get; set; }
-        public int DistanceInMeters { get; set; }
-        public int TimeInSeconds { get; set; }
-    }
-
-    public class EntryNewDTO
+    public class EntryDataDTO
     {
         public int UserId { get; set; }
         public DateTime Date { get; set; }
