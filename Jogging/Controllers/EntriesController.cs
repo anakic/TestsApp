@@ -131,7 +131,7 @@ namespace jogging.Controllers
         {
             //.NET core doesn't have a Calendar.WeekOfYear() method
             //so using an (not so great) approximation here
-            return 1 + dt.Day / 7;
+            return 1 + dt.DayOfYear / 7;
         }
     }
 

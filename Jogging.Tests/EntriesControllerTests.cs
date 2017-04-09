@@ -179,9 +179,9 @@ namespace Jogging.Tests
         [TestMethod]
         public void WeeklySummaryIsCorrect()
         {
-            DateTime dt1 = new DateTime(2020, 1, 12);//week2
-            DateTime dt2 = new DateTime(2020, 1, 18);//week3
-            DateTime dt3 = new DateTime(2020, 1, 19);//week3
+            DateTime dt1 = new DateTime(2020, 2, 12);//week7
+            DateTime dt2 = new DateTime(2020, 3, 18);//week12
+            DateTime dt3 = new DateTime(2020, 3, 19);//week12
 
             Entry u1e1, u2e1, u2e2, u2e3;//u2e2 means user2:entry2
             _userService.SetUser(_adminUser);
@@ -195,7 +195,7 @@ namespace Jogging.Tests
             _userService.SetUser(_regularUser1);
             var res = ((_controller.WeeklySummaries(dt1, dt3) as OkObjectResult).Value as IEnumerable<WeeklySummaryDTO>).ToArray();
             Assert.AreEqual(2020, res.Single().Year);
-            Assert.AreEqual(2, res.Single().Week);
+            Assert.AreEqual(7, res.Single().Week);
             Assert.AreEqual(u1e1.DistanceInMeters, res.Single().TotalDistanceInMeters);
             Assert.AreEqual(u1e1.TimeInSeconds, res.Single().TotalTimeInSeconds);
             Assert.AreEqual(u1e1.DistanceInMeters / (float)u1e1.TimeInSeconds, res.Single().AverageSpeed);
@@ -207,14 +207,14 @@ namespace Jogging.Tests
             //--> summary for week 3
             var u2w3 = res.ElementAt(0);
             Assert.AreEqual(2020, u2w3.Year);
-            Assert.AreEqual(3, u2w3.Week);
+            Assert.AreEqual(12, u2w3.Week);
             Assert.AreEqual(u2e2.DistanceInMeters + u2e3.DistanceInMeters, u2w3.TotalDistanceInMeters);
             Assert.AreEqual(u2e2.TimeInSeconds + u2e3.TimeInSeconds, u2w3.TotalTimeInSeconds);
             Assert.AreEqual((u2e2.DistanceInMeters + u2e3.DistanceInMeters) / (float)(u2e2.TimeInSeconds + u2e3.TimeInSeconds), u2w3.AverageSpeed);
             //--> summary for week 2
             var u2w2 = res.ElementAt(1);
             Assert.AreEqual(2020, u2w2.Year);
-            Assert.AreEqual(2, u2w2.Week);
+            Assert.AreEqual(7, u2w2.Week);
             Assert.AreEqual(u2e1.DistanceInMeters, u2w2.TotalDistanceInMeters);
             Assert.AreEqual(u2e1.TimeInSeconds, u2w2.TotalTimeInSeconds);
             Assert.AreEqual(u2e1.DistanceInMeters / (float)u2e1.TimeInSeconds, u2w2.AverageSpeed);
