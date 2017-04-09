@@ -1,1 +1,70 @@
-﻿admin component placeholder
+﻿<h1>Manage users</h1>
+
+<em *ngIf="isFetching">Working...</em>
+
+<div *ngIf="editingUser" class="panel panel-primary editBox">
+    <div class="panel-heading">
+        Enter user data
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-2">Email</div>
+            <div class="col-md-10"><input class="form-control" name="Email" [(ngModel)]="editingUser.email" type="email"/></div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">First name</div>
+            <div class="col-md-10"><input class="form-control" name="FirstName" [(ngModel)]="editingUser.firstName"/></div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">Last name</div>
+            <div class="col-md-10"><input class="form-control" name="LastName" [(ngModel)]="editingUser.lastName" /></div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">Role</div>
+            <div class="col-md-10">
+                <select class="form-control"  [(ngModel)]="editingUser.role">
+                    <option [attr.value]='0' [attr.selected]="editingUser.role==0 ? true : null">{{ roleIdToName(0) }}</option>
+                    <option [attr.value]='1' [attr.selected]="editingUser.role==1 ? true : null">{{ roleIdToName(1) }}</option>
+                    <option [attr.value]='2' [attr.selected]="editingUser.role==2 ? true : null">{{ roleIdToName(2) }}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <button (click)="saveChanges()">Save</button>
+        <button (click)="cancelEdit()">Cancel</button>
+        <em class="text-danger">{{ message }}</em>
+    </div>
+</div>
+
+<div class="row" *ngIf="!editingUser">
+    <div>
+        <input [(ngModel)]="searchTerm" (keyup.enter)="filter()" />
+        <button (click)="filter()">Filter</button>
+        <button (click)="newUser()">New user</button>
+        <em class="text-danger">{{ message }}</em>
+    </div>
+    <table class="table" *ngIf="users">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>First name</th>
+                <th>Last name</th>
+                <th>Role</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let user of users">
+                <td>{{user.email}}</td>
+                <td>{{user.firstName}}</td>
+                <td>{{user.lastName}}</td>
+                <td>{{roleIdToName(user.role)}}</td>
+                <td>
+                    <button (click)="editUser(user)">Edit</button>
+                    <button (click)="deleteUser(user)">Delete</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

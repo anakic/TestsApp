@@ -5,49 +5,125 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using jogging.Model;
 using jogging.Services;
+using Microsoft.AspNetCore.Authorization;
+using System.Text.RegularExpressions;
 
 namespace jogging.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize(Roles = nameof(UserRole.Admin) + ", " + nameof(UserRole.Manager))]
     public class UsersController : Controller
     {
-        ILoginService _userService;
-        public UsersController(ILoginService userService)
+        JoggingDbContext _context;
+        ILoginService _loginService;
+        IEmailNotifier _emailNotifier;
+        public UsersController(ILoginService userService, JoggingDbContext context, IEmailNotifier emailNotifier)
         {
-            _userService = userService;
+            _loginService = userService;
+            _context = context;
+            _emailNotifier = emailNotifier;
         }
 
         [HttpGet()]
-        public IActionResult Current()
+        public IActionResult Get(string searchTerm)
         {
-            var user = _userService.GetCurrentUser();
-            if (user != null)
-                return Ok(user);
-            else
-                return NotFound();
+            string[] searchSegments = (searchTerm ?? "")
+                .Split(new string[] { " ", "," }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(seg => seg.ToUpper())
+                .ToArray();
+
+            var users = _context.Users
+                .Where(u => searchSegments.Length == 0 || searchSegments.All(seg => u.Email.ToUpper().Contains(seg) || u.FirstName.ToUpper().Contains(seg) || u.LastName.ToUpper().Contains(seg)));
+
+            return Ok(users);
         }
+
+        Regex emailRegex = new Regex(@"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z");
 
         [HttpPost()]
-        public async Task<IActionResult> Login([FromBody]LoginCredentials credentials)
+        public IActionResult Post([FromBody]UserDto newUserDto)
         {
-            var user = await _userService.LoginAsync(credentials.Email, credentials.Password);
-            if (user != null)
-                return Ok(user);
+            if (newUserDto.Role > _loginService.GetCurrentUser().Role)
+            {
+                return BadRequest("Cannot bestow a user with a more magnificent role than current user.");
+            }
+            else if (emailRegex.IsMatch(newUserDto.Email) == false)
+            {
+                return BadRequest("Invalid email address.");
+            }
             else
-                return NotFound("Invalid credentials.");
+            {
+                var newUser = new User()
+                {
+                    Email = newUserDto.Email,
+                    FirstName = newUserDto.FirstName,
+                    LastName = newUserDto.LastName,
+                    Role = newUserDto.Role,
+                };
+
+                //generate random password user
+                string password = Guid.NewGuid().ToString("n").Substring(12);
+                newUser.SetPassword(password);
+                _context.Add(newUser);
+                _context.SaveChanges();
+
+                _emailNotifier.SendUserdDetails(newUser.Email, newUser.FirstName, newUser.LastName, password, newUser.Role.ToString());
+
+                return Ok();
+            }
         }
 
-        [HttpDelete()]
-        public async Task<IActionResult> SignOut()
+        [HttpPut("{userId}")]
+        public async Task<IActionResult> Put(int userId, [FromBody]UserDto userDTO)
         {
-            await _userService.SignOut();
-            return Ok();
+            var currentUser = _loginService.GetCurrentUser();
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                return BadRequest("Invalid userId");
+            else if (emailRegex.IsMatch(userDTO.Email) == false)
+            {
+                return BadRequest("Invalid email address.");
+            }
+            else if (currentUser.Id == userId && currentUser.Role != userDTO.Role)
+            {
+                return BadRequest("User cannot modify their own role!");
+            }
+            else if (userDTO.Role > currentUser.Role || user.Role > currentUser.Role)
+            {
+                return BadRequest("Cannot bestow a user with a more magnificent role than current user");
+            }
+            else
+            {
+                user.Email = userDTO.Email;
+                user.FirstName = userDTO.FirstName;
+                user.LastName = userDTO.LastName;
+                user.Role = userDTO.Role;
+                _context.SaveChanges();
+                return Ok();
+            }
         }
 
-        public class LoginCredentials
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            public string Email { get; set; }
-            public string Password { get; set; }
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+                return BadRequest("Invalid user");
+            else if (user.Id == _loginService.GetCurrentUser().Id)
+                return BadRequest("User cannot delete own account.");
+            else
+            {
+                _context.Remove(user);
+                return Ok();
+            }
         }
+    }
+
+    public class UserDto
+    {
+        public string Email { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public UserRole Role { get; set; }
     }
 }
