@@ -14,7 +14,7 @@ export class IsLoggedInGuard implements CanActivate {
 
         if (!isLoggedIn) {
             this.loginService.redirectUrl = state.url;
-            this.router.navigateByUrl(this.loginService.loginUrl);
+            this.router.navigate(['login']);
         }
 
         return isLoggedIn;
@@ -28,7 +28,7 @@ export class IsUserAdminGuard implements CanActivate {
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
         if (!this.loginService.user || !this.loginService.user.canCrudUsers) {
-            this.router.navigateByUrl('/entries');
+            this.router.navigate(['entries']);
         }
         return this.loginService.user && this.loginService.user.canCrudUsers;
     };
